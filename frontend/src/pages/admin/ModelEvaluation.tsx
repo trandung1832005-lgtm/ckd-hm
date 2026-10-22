@@ -1,33 +1,54 @@
 import { Download } from 'lucide-react'
 import { useState, type ReactNode } from 'react'
 import {
-  Bar, BarChart, CartesianGrid, ComposedChart, ErrorBar, Legend, Line, LineChart, ReferenceLine, ResponsiveContainer,
+  Bar, BarChart, CartesianGrid, Cell, ComposedChart, ErrorBar, Legend, Line, LineChart, ReferenceLine, ResponsiveContainer,
   Scatter, ScatterChart, Tooltip, XAxis, YAxis,
 } from 'recharts'
-import { Alert, Button, Card, PageTitle, Spinner, StatusBadge, Table, Td, useAsync } from '../../components/ui'
+import { Alert, Button, Card, PageTitle, Spinner, StatusBadge, useAsync } from '../../components/ui'
 import { api, download } from '../../lib/api'
-import { CLUSTER_ORDER, fmtDateTime, pct } from '../../lib/labels'
+import { CLUSTER_ORDER, fmtDateTime } from '../../lib/labels'
 import type { Evaluation } from '../../lib/types'
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const SETS = ['Train', 'Validation', 'Test'] as const
-const C = { train: '#94a3b8', val: '#475569', test: '#0f766e', warn: '#dc2626', gru: '#1565c0', lstm: '#e65100' }
-const f3 = (v: number) => v.toFixed(3)
-const TIP: Record<string, string> = {
-  MAE: 'Sai số tuyệt đối trung bình giữa eGFR thực tế và dự đoán. Càng thấp càng tốt.',
-  RMSE: 'Căn bậc hai sai số bình phương trung bình; phạt nặng các sai số lớn. Càng thấp càng tốt.',
-  'R²': 'Tỷ lệ phương sai eGFR được mô hình giải thích. Càng gần 1 càng tốt.',
-  AUC: 'Khả năng phân biệt bệnh nhân suy giảm nhanh với phần còn lại (0.5 = ngẫu nhiên, 1 = hoàn hảo). Cao hơn tốt hơn.',
-  'η²': 'Mức các nhóm khác nhau về tốc độ eGFR thực tế (Kruskal–Wallis). Cao hơn = nhóm tách biệt hơn.',
-  ARI: 'Độ ổn định của cụm khi lấy mẫu lại (Adjusted Rand Index). Cao hơn = ổn định hơn.',
-  Silhouette: 'Độ gọn và tách biệt của cụm (−1 đến 1). Cao hơn tốt hơn.',
-  'Davies–Bouldin': 'Mức chồng lấn giữa các cụm. THẤP hơn tốt hơn.',
+const C = { train: '#94a3b8', val: '#475569', test: '#0f766e', warn: '#dc2626', gru: '#1565c0', lstm: '#e65100', rep: '#7c3aed' }
+const SET_COLOR: Record<string, string> = { Train: C.train, Validation: C.val, Test: C.test }
+const MONTHS = ['18', '24', '30', '36']
+/** "74.1%" -> 74.1 ; "0.922" -> 0.922 */
+const num = (s: string | undefined) => (s == null ? NaN : parseFloat(String(s).replace('%', '')))
+const r2 = (v: number) => +v.toFixed(2)
+const r3 = (v: number) => +v.toFixed(3)
+
+const lab = (d = 2, unit = '') => ({ position: 'top' as const, fontSize: 10, formatter: (v: any) => (v == null || Number.isNaN(Number(v)) ? '' : `${Number(v).toFixed(d)}${unit}`) })
+
+function Chart({ title, note, h = 300, children, label }: { title: string; note?: ReactNode; h?: number; children: ReactNode; label?: string }) {
+  return (
+    <Card title={title}>
+      <div style={{ height: h }} role="img" aria-label={label ?? title}><ResponsiveContainer>{children as any}</ResponsiveContainer></div>
+      {note && <p className="mt-2 text-xs text-slate-500">{note}</p>}
+    </Card>
+  )
 }
-const Tip = ({ k }: { k: string }) => <abbr title={TIP[k]} className="cursor-help underline decoration-dotted">{k}</abbr>
-const Chart = ({ h = 300, label, children }: { h?: number; label: string; children: ReactNode }) => (
-  <div style={{ height: h }} role="img" aria-label={label}><ResponsiveContainer>{children as any}</ResponsiveContainer></div>
-)
-const Note = ({ children }: { children: ReactNode }) => <p className="mt-2 text-xs text-slate-500">{children}</p>
+
+/** Cột nhóm: data = [{name, <series>: value}], series = [[key, color]] */
+function Grouped({ title, data, series, d = 2, unit = '', domain, note, h = 280, xKey = 'name', ref }: {
+  title: string; data: any[]; series: [string, string][]; d?: number; unit?: string; domain?: [number | string, number | string]; note?: ReactNode; h?: number; xKey?: string; ref?: { y: number; label: string }
+}) {
+  return (
+    <Chart title={title} note={note} h={h}>
+      <BarChart data={data} margin={{ top: 18, right: 12 }}>
+        <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" /><XAxis dataKey={xKey} tick={{ fontSize: 11 }} />
+        <YAxis domain={domain} tick={{ fontSize: 11 }} unit={unit} /><Tooltip formatter={(v: any) => `${Number(v).toFixed(d)}${unit}`} /><Legend wrapperStyle={{ fontSize: 12 }} />
+        {ref && <ReferenceLine y={ref.y} stroke={C.warn} strokeDasharray="5 4" label={{ value: ref.label, position: 'insideTopRight', fontSize: 11, fill: C.warn }} />}
+        {series.map(([k, c]) => <Bar key={k} isAnimationActive={false} dataKey={k} fill={c} label={lab(d, unit)} />)}
+      </BarChart>
+    </Chart>
+  )
+}
+const bySet = (rows: [string, (s: string) => number][]) => rows.map(([name, f]) => ({ name, ...Object.fromEntries(SETS.map((s) => [s, f(s)])) }))
+const bySetTV = (rows: [string, (s: string) => number][]) => rows.map(([name, f]) => ({ name, Train: f('Train'), Validation: f('Validation') }))
+const setSeries: [string, string][] = SETS.map((s) => [s, SET_COLOR[s]])
+const Grid2 = ({ children }: { children: ReactNode }) => <div className="grid gap-6 lg:grid-cols-2">{children}</div>
 
 const TABS = [
   ['overview', 'Tổng quan'], ['experiments', 'Experiment Tracking'], ['learning', 'Learning Curve'],
@@ -42,7 +63,6 @@ export default function ModelEvaluation() {
   if (ev.loading || ver.loading) return <Spinner />
   if (!ev.data || !ver.data) return <Alert kind="error">{ev.error ?? ver.error ?? 'Không tải được dữ liệu đánh giá'}</Alert>
   const E = ev.data
-
   return (
     <>
       <PageTitle title="Đánh giá mô hình AI" subtitle="Chỉ Admin truy cập. Đánh giá offline trên dữ liệu nghiên cứu (Demo_HM), không phải hiệu năng vận hành trực tuyến."
@@ -66,38 +86,52 @@ export default function ModelEvaluation() {
 
 /* ============================ Tổng quan ============================ */
 function Overview({ E, ver }: { E: Evaluation; ver: any }) {
-  const R = E.reported
-  const fs = E.project.final_summary
+  const R = E.reported, D = E.deployed, fs = E.project.final_summary
+  const reg = (s: string) => D.sets[s].regression
+  const tk = (s: string, k: 'mae' | 'rmse' | 'r2') => r3(reg(s)[k])
+  const cmp = (k: 'mae' | 'rmse' | 'r2') => SETS.map((s) => ({ name: s, 'Theo báo cáo': r3(R.regression[s][k]), 'Trọng số triển khai': tk(s, k) }))
+  const cmpSeries: [string, string][] = [['Theo báo cáo', C.rep], ['Trọng số triển khai', C.test]]
+  const fsv = (k: string) => (s: string) => num(fs[k][s as 'Train'])
   return (
     <>
       <Alert kind="warn" title="Hai nguồn số liệu chưa trùng khớp">
-        {R.caveat} Các bảng hiển thị cả số liệu <b>theo báo cáo</b> (BC) và số liệu <b>tái tính từ trọng số đang triển khai</b>; không trộn lẫn hai nguồn. Các biểu đồ Learning Curve, độ tin cậy và bảng tổng hợp cuối dưới đây đều từ trọng số/notebook đang có trong Demo_HM.
+        {R.caveat} Biểu đồ so sánh bên dưới tách rõ <b>theo báo cáo</b> và <b>trọng số triển khai</b>; các biểu đồ còn lại đều từ trọng số/notebook đang có trong Demo_HM.
       </Alert>
-      <Card title="Thông tin mô hình" actions={<span className="flex items-center gap-2 text-sm">API dự đoán: <StatusBadge status={ver.api.model_ready ? 'active' : 'inactive'} /></span>}>
-        <Table head={['Tên', 'Phiên bản', 'Trạng thái', 'Dữ liệu', 'Triển khai', 'SHA-256 trọng số']}>
+      <Card title="Mô hình và phiên bản" actions={<span className="flex items-center gap-2 text-sm">API dự đoán: <StatusBadge status={ver.api.model_ready ? 'active' : 'inactive'} /></span>}>
+        <div className="grid gap-3 md:grid-cols-2">
           {ver.items.map((v: any) => (
-            <tr key={v.id}><Td className="font-medium">{v.name}</Td><Td className="font-mono text-xs">{v.version}</Td><Td><StatusBadge status={v.status} /></Td><Td className="text-xs">{v.trained_on}</Td><Td>{fmtDateTime(v.deployed_at)}</Td><Td className="font-mono text-xs">{v.weights_sha256 ? v.weights_sha256.slice(0, 12) + '…' : '—'}</Td></tr>))}
-        </Table>
-        <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-slate-600">
-          {ver.items.map((v: any) => <li key={v.id}><b>{v.version}</b>: {v.description}</li>)}
-          <li>Quy trình: GRU (5 seed gộp) → đặc trưng xu hướng (độ dốc, thay đổi tổng) + UPCR/Albumin/SBP → cắt phân vị 5–95% theo Train → chuẩn hoá → K-Means 3 cụm. Số bệnh nhân: Train {E.dataset.Train}, Validation {E.dataset.Validation}, Test {E.dataset.Test}.</li>
-        </ul>
+            <div key={v.id} className="rounded-lg border border-slate-200 p-3 text-sm">
+              <div className="flex flex-wrap items-center justify-between gap-2"><b>{v.name}</b><StatusBadge status={v.status} /></div>
+              <p className="mt-1 font-mono text-xs text-slate-500">{v.version}{v.weights_sha256 ? ` · sha256 ${v.weights_sha256.slice(0, 10)}…` : ''}</p>
+              <p className="mt-1 text-slate-600">{v.description}</p>
+              <p className="mt-1 text-xs text-slate-500">Triển khai: {fmtDateTime(v.deployed_at)}</p>
+            </div>))}
+        </div>
+        <p className="mt-3 text-xs text-slate-500">Quy trình: GRU (5 seed gộp) → độ dốc và thay đổi tổng eGFR + UPCR/Albumin/SBP → cắt phân vị 5–95% theo Train → chuẩn hoá → K-Means 3 cụm. Dữ liệu: Train {E.dataset.Train}, Validation {E.dataset.Validation}, Test {E.dataset.Test} bệnh nhân.</p>
       </Card>
-      <Card title="Bảng tổng hợp cuối: Train / Validation / Test (trọng số triển khai)">
-        <Table head={['Chỉ số', 'Train', 'Validation', 'Test']}>
-          {Object.entries(fs).map(([k, v]) => (<tr key={k}><Td className="font-medium">{k}</Td><Td>{v.Train}</Td><Td>{v.Validation}</Td><Td className="bg-slate-50">{v.Test}</Td></tr>))}
-        </Table>
-        <Note>Nguồn: tong_hop_cuoi_train_val_test.csv (notebook ô 10, mục F). Test chỉ chạy một lần duy nhất.</Note>
-      </Card>
-      <Card title="Hồi quy eGFR: báo cáo so với trọng số triển khai (mL/phút/1,73m²)">
-        <Table head={['Chỉ số', 'Train (BC)', 'Validation (BC)', 'Test (BC)', 'Train (triển khai)', 'Validation (triển khai)', 'Test (triển khai)']}>
-          {([['MAE', 'mae', f3], ['RMSE', 'rmse', f3], ['R²', 'r2', f3], ['Sai số ≤ 5', 'within5', pct], ['Sai số ≤ 10', 'within10', pct]] as const).map(([lab, key, fm]) => (
-            <tr key={lab}><Td className="font-medium">{lab in TIP ? <Tip k={lab} /> : lab}</Td>
-              {SETS.map((s) => <Td key={'r' + s}>{(fm as any)(R.regression[s][key])}</Td>)}
-              {SETS.map((s) => <Td key={'d' + s} className="bg-slate-50">{(fm as any)(E.deployed.sets[s].regression[key])}</Td>)}</tr>))}
-        </Table>
-        <Note>BC = theo báo cáo (đã được xác nhận). Tỷ lệ sai số ≤ 5/≤ 10 = số giá trị dự đoán (bệnh nhân × mốc 18–36 tháng có eGFR thật) có |sai số| ≤ ngưỡng, chia cho tổng số giá trị có nhãn thật.</Note>
-      </Card>
+
+      <p className="text-sm font-semibold text-slate-700">Tổng hợp Train / Validation / Test (trọng số triển khai)</p>
+      <Grid2>
+        <Grouped title="Sai số hồi quy eGFR (mL/phút/1,73m², thấp hơn là tốt)" data={bySet([['MAE', (s) => tk(s, 'mae')], ['RMSE', (s) => tk(s, 'rmse')]])} series={setSeries} d={2} />
+        <Grouped title="R² (cao hơn là tốt)" data={SETS.map((s) => ({ name: s, 'R²': tk(s, 'r2') }))} series={[['R²', C.gru]]} d={3} domain={[0, 1]} />
+        <Grouped title="Tỷ lệ dự đoán đạt yêu cầu (%)" h={320}
+          data={bySet([['Lệch ≤ 5', fsv('GRU – dự đoán lệch ≤ 5')], ['Lệch ≤ 10', fsv('GRU – dự đoán lệch ≤ 10')], ['Đúng xu hướng', fsv('GRU – đúng xu hướng')],
+            ['Đúng G (36 th.)', fsv('Hệ thống – đúng giai đoạn 36M')], ['Lệch ≤ 1 G', fsv('Hệ thống – lệch ≤ 1 giai đoạn')]])} series={setSeries} d={1} unit="%" domain={[0, 105]} />
+        <Grouped title="Phân cụm: Accuracy, độ nhạy, độ đặc hiệu (%)" h={320}
+          data={bySet([['Accuracy', fsv('KMeans – Accuracy')], ['Độ nhạy', fsv('KMeans – Độ nhạy')], ['Độ đặc hiệu', fsv('KMeans – Độ đặc hiệu')]])}
+          series={setSeries} d={1} unit="%" domain={[0, 100]} note="Độ nhạy thấp hơn đáng kể ở Validation và Test: mô hình bỏ sót nhiều ca suy giảm nhanh." />
+        <Grouped title="Phân cụm: AUC suy giảm nhanh và η² (0–1)" data={bySet([['AUC', fsv('KMeans – AUC suy giảm nhanh')], ['η²', fsv('KMeans – η²')]])} series={setSeries} d={3} domain={[0, 1]} />
+      </Grid2>
+
+      <p className="text-sm font-semibold text-slate-700">Báo cáo so với trọng số triển khai</p>
+      <Grid2>
+        <Grouped title="MAE: báo cáo so với triển khai" data={cmp('mae')} series={cmpSeries} d={3} domain={[0, 5]} />
+        <Grouped title="RMSE: báo cáo so với triển khai" data={cmp('rmse')} series={cmpSeries} d={3} domain={[0, 8]} />
+        <Grouped title="R²: báo cáo so với triển khai" data={cmp('r2')} series={cmpSeries} d={3} domain={[0, 1]} />
+        <Grouped title="Tỷ lệ sai số ≤ 5 và ≤ 10 (%): báo cáo so với triển khai"
+          data={SETS.flatMap((s) => [{ name: `${s} ≤5`, 'Theo báo cáo': r2(R.regression[s].within5 * 100), 'Trọng số triển khai': r2(reg(s).within5 * 100) }, { name: `${s} ≤10`, 'Theo báo cáo': r2(R.regression[s].within10 * 100), 'Trọng số triển khai': r2(reg(s).within10 * 100) }])}
+          series={cmpSeries} d={1} unit="%" domain={[0, 105]} note="Chênh lệch nhỏ (≤ 0.1 MAE) nhưng chưa trùng; cần trọng số phiên bản báo cáo để thống nhất." />
+      </Grid2>
     </>
   )
 }
@@ -106,54 +140,43 @@ function Overview({ E, ver }: { E: Evaluation; ver: any }) {
 function Experiments({ E }: { E: Evaluation }) {
   const R = E.reported
   const testMae = E.deployed.sets.Test.regression.mae
-  const rows = R.experiments.map((e, i) => ({ ...e, key: i, label: `TN${e.id} · ${e.model}`, gap: e.train_mae != null ? +(e.val_mae - e.train_mae).toFixed(3) : null }))
+  const rows = R.experiments.map((e) => ({ ...e, label: `TN${e.id} · ${e.model}`, 'Validation MAE': e.val_mae, 'Train MAE': e.train_mae, 'Khoảng cách Val−Train': e.train_mae != null ? r3(e.val_mae - e.train_mae) : null, 'Số tham số': e.params }))
+  const gapRows = rows.filter((r) => r['Khoảng cách Val−Train'] != null)
+  const parRows = rows.filter((r) => r['Số tham số'] != null)
   const cc = R.cluster_comparison
-  const cmpRows: [string, 'auc' | 'eta2' | 'ari' | 'silhouette' | 'davies_bouldin', boolean][] = [['AUC', 'auc', true], ['η²', 'eta2', true], ['ARI', 'ari', true], ['Silhouette', 'silhouette', true], ['Davies–Bouldin', 'davies_bouldin', false]]
+  const cmp = (keys: [string, 'auc' | 'eta2' | 'ari' | 'silhouette' | 'davies_bouldin'][]) => keys.map(([n, k]) => ({ name: n, GMM: cc.GMM[k], 'K-Means': cc.KMeans[k] }))
+  const cl: [string, string][] = [['GMM', C.train], ['K-Means', C.test]]
   return (
     <>
-      <Card title="Experiment Tracking – nhật ký thí nghiệm dự đoán eGFR (GRU / LSTM)">
-        <Chart h={360} label="Biểu đồ cột ngang Validation MAE và Train MAE qua các thí nghiệm">
-          <BarChart data={rows} layout="vertical" margin={{ left: 20, right: 40 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-            <XAxis type="number" domain={[3, 5]} tick={{ fontSize: 12 }} label={{ value: 'MAE (mL/phút/1,73m²)', position: 'insideBottom', offset: -2, fontSize: 12 }} />
-            <YAxis type="category" dataKey="label" width={80} tick={{ fontSize: 12 }} />
-            <Tooltip formatter={(v: any) => (typeof v === 'number' ? v.toFixed(3) : '—')} />
-            <Legend />
-            <ReferenceLine x={testMae} stroke={C.test} strokeDasharray="5 4" label={{ value: `Test (triển khai) ${testMae.toFixed(3)}`, position: 'top', fontSize: 11, fill: C.test }} />
-            <Bar isAnimationActive={false} dataKey="val_mae" name="Validation MAE" fill={C.val} label={{ position: 'right', fontSize: 10, formatter: (v: any) => Number(v).toFixed(3) }} />
-            <Bar isAnimationActive={false} dataKey="train_mae" name="Train MAE" fill={C.train} label={{ position: 'right', fontSize: 10, formatter: (v: any) => (v == null ? '' : Number(v).toFixed(3)) }} />
+      <Chart title="Experiment Tracking – Validation MAE và Train MAE qua các thí nghiệm" h={380}
+        note={<>Trục bắt đầu từ 3.0 để thấy rõ khác biệt. Đường chấm = MAE Test của trọng số triển khai ({testMae.toFixed(3)}); báo cáo ghi {R.regression.Test.mae.toFixed(3)} cho phiên bản “chống quá khớp”. Nguồn: nhật ký thí nghiệm của notebook.</>}>
+        <BarChart data={rows} layout="vertical" margin={{ left: 20, right: 50 }}>
+          <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+          <XAxis type="number" domain={[3, 5]} tick={{ fontSize: 12 }} label={{ value: 'MAE (mL/phút/1,73m²)', position: 'insideBottom', offset: -2, fontSize: 12 }} />
+          <YAxis type="category" dataKey="label" width={80} tick={{ fontSize: 12 }} /><Tooltip formatter={(v: any) => (typeof v === 'number' ? v.toFixed(3) : '—')} /><Legend />
+          <ReferenceLine x={testMae} stroke={C.test} strokeDasharray="5 4" label={{ value: `Test ${testMae.toFixed(3)}`, position: 'top', fontSize: 11, fill: C.test }} />
+          <Bar isAnimationActive={false} dataKey="Validation MAE" fill={C.val} label={{ position: 'right', fontSize: 10, formatter: (v: any) => Number(v).toFixed(3) }} />
+          <Bar isAnimationActive={false} dataKey="Train MAE" fill={C.train} label={{ position: 'right', fontSize: 10, formatter: (v: any) => (v == null ? '' : Number(v).toFixed(3)) }} />
+        </BarChart>
+      </Chart>
+      <Grid2>
+        <Chart title="Khoảng cách Val − Train (càng nhỏ càng ít quá khớp)" note="TN3 GRU 0.580 → TN4 GRU 0.425 sau khi thêm phạt khoảng cách và regularization; đổi lại Val MAE tăng nhẹ 4.101 → 4.205. Thí nghiệm 1–2 không ghi Train MAE. GRU xanh, LSTM cam.">
+          <BarChart data={gapRows} margin={{ top: 18 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" /><XAxis dataKey="label" tick={{ fontSize: 11 }} /><YAxis /><Tooltip />
+            <Bar isAnimationActive={false} dataKey="Khoảng cách Val−Train" label={lab(3)}>{gapRows.map((r, i) => <Cell key={i} fill={r.model === 'GRU' ? C.gru : C.lstm} />)}</Bar>
           </BarChart>
         </Chart>
-        <Note>Trục bắt đầu từ 3.0 để thấy rõ khác biệt. Đường chấm = MAE Test của trọng số đang triển khai ({testMae.toFixed(3)}); số theo báo cáo cho phiên bản “chống quá khớp” là {R.regression.Test.mae.toFixed(3)}.</Note>
-        <div className="mt-4">
-          <Table head={['TN', 'Mô hình', 'Tên', 'Val MAE', 'Train MAE', 'Khoảng cách Val−Train', 'Số tham số', 'Ghi chú']}>
-            {rows.map((e) => (<tr key={e.key} className={e.name.includes('được chọn') ? 'bg-brand-50' : ''}><Td>{e.id}</Td><Td>{e.model}</Td><Td className="font-medium">{e.name}</Td><Td>{f3(e.val_mae)}</Td><Td>{e.train_mae != null ? f3(e.train_mae) : '—'}</Td><Td>{e.gap ?? '—'}</Td><Td>{e.params ?? '—'}</Td><Td className="text-xs">{e.note}</Td></tr>))}
-          </Table>
-        </div>
-        <Note>Khoảng cách Val−Train càng nhỏ càng ít quá khớp: TN3 GRU 0.580 → TN4 GRU 0.425 sau khi thêm phạt khoảng cách và regularization, đổi lại Val MAE tăng nhẹ 4.101 → 4.205.</Note>
-      </Card>
-
-      <Card title="Experiment Tracking – phân cụm: K-Means so với GMM">
-        <div className="grid gap-6 lg:grid-cols-2">
-          <div>
-            <Table head={['Chỉ số', 'GMM', 'K-Means', 'Nhận xét']}>
-              {cmpRows.map(([k, key, hi]) => {
-                const g = cc.GMM[key], m = cc.KMeans[key]
-                const better = Math.abs(m - g) < 0.005 ? 'Tương đương' : (hi ? m > g : m < g) ? 'K-Means tốt hơn' : 'GMM tốt hơn'
-                return <tr key={k}><Td className="font-medium"><Tip k={k} /></Td><Td>{f3(g)}</Td><Td>{f3(m)}</Td><Td className="text-xs">{better}{!hi && ' (thấp hơn là tốt)'}</Td></tr>
-              })}
-            </Table>
-            <Note>{cc.note} K-Means được chọn vì thắng nhiều tiêu chí hơn; AUC hai mô hình gần như bằng nhau.</Note>
-          </div>
-          <Chart h={260} label="Biểu đồ cột so sánh GMM và K-Means theo AUC, η², ARI, Silhouette">
-            <BarChart data={cmpRows.filter(([, , hi]) => hi).map(([k, key]) => ({ metric: k, GMM: cc.GMM[key], 'K-Means': cc.KMeans[key] }))}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" /><XAxis dataKey="metric" tick={{ fontSize: 12 }} /><YAxis domain={[0, 1]} /><Tooltip /><Legend />
-              <Bar isAnimationActive={false} dataKey="GMM" fill={C.train} label={{ position: 'top', fontSize: 10, formatter: (v: any) => Number(v).toFixed(2) }} />
-              <Bar isAnimationActive={false} dataKey="K-Means" fill={C.test} label={{ position: 'top', fontSize: 10, formatter: (v: any) => Number(v).toFixed(2) }} />
-            </BarChart>
-          </Chart>
-        </div>
-      </Card>
+        <Chart title="Số tham số của mô hình" note="LSTM TN3 có 319 937 tham số, gấp ~5 lần GRU (60 929) nhưng không tốt hơn. GRU xanh, LSTM cam.">
+          <BarChart data={parRows} margin={{ top: 18 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" /><XAxis dataKey="label" tick={{ fontSize: 11 }} /><YAxis tick={{ fontSize: 11 }} /><Tooltip />
+            <Bar isAnimationActive={false} dataKey="Số tham số" label={{ position: 'top', fontSize: 10 }}>{parRows.map((r, i) => <Cell key={i} fill={r.model === 'GRU' ? C.gru : C.lstm} />)}</Bar>
+          </BarChart>
+        </Chart>
+        <Grouped title="Phân cụm – K-Means so với GMM (cao hơn là tốt)" data={cmp([['AUC', 'auc'], ['η²', 'eta2'], ['ARI', 'ari'], ['Silhouette', 'silhouette']])} series={cl} d={3} domain={[0, 1]}
+          note="AUC: phát hiện suy giảm nhanh; η²: tách biệt theo tốc độ eGFR thật; ARI: ổn định khi lấy mẫu lại; Silhouette: độ gọn của cụm." />
+        <Grouped title="Phân cụm – Davies–Bouldin (THẤP hơn là tốt)" data={cmp([['Davies–Bouldin', 'davies_bouldin']])} series={cl} d={3} domain={[0, 3]}
+          note={`${cc.note} K-Means được chọn vì thắng η², ARI, Silhouette và Davies–Bouldin; AUC hai mô hình gần như bằng nhau.`} />
+      </Grid2>
     </>
   )
 }
@@ -163,142 +186,124 @@ function Learning({ E }: { E: Evaluation }) {
   const P = E.project
   const ep = P.learning_epoch
   const best = ep.reduce((b, r) => (r.diem < b.diem ? r : b), ep[0])
-  const ld = P.learning_data.map((r) => ({ ...r, train_err: r.train_std, val_err: r.val_std }))
+  const ld = P.learning_data.map((r) => ({ ...r, gap: r3(r.val_mean - r.train_mean) }))
   const last = ld[ld.length - 1]
   return (
     <>
       <Alert kind="info">{P.learning_note}</Alert>
-      <Card title="Learning Curve theo epoch (MAE, mL/phút/1,73m²)">
-        <Chart h={320} label="Đường cong học tập theo epoch: Train MAE, Validation MAE và điểm phạt">
-          <LineChart data={ep} margin={{ right: 20 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-            <XAxis dataKey="epoch" tick={{ fontSize: 12 }} label={{ value: 'Epoch', position: 'insideBottom', offset: -2, fontSize: 12 }} />
-            <YAxis domain={['auto', 'auto']} tick={{ fontSize: 12 }} /><Tooltip formatter={(v: any) => Number(v).toFixed(3)} /><Legend verticalAlign="top" />
-            <ReferenceLine x={best.epoch} stroke={C.warn} strokeDasharray="4 4" label={{ value: `Tốt nhất: epoch ${best.epoch}`, position: 'insideTopRight', fontSize: 11, fill: C.warn }} />
-            <Line isAnimationActive={false} type="monotone" dataKey="train" name="Train MAE" stroke={C.gru} dot={false} strokeWidth={2} />
-            <Line isAnimationActive={false} type="monotone" dataKey="val" name="Validation MAE" stroke={C.lstm} dot={false} strokeWidth={2} />
-            <Line isAnimationActive={false} type="monotone" dataKey="diem" name="Điểm phạt (dùng cho early stopping)" stroke="#64748b" strokeDasharray="5 4" dot={false} />
-          </LineChart>
+      <Chart title="Learning Curve theo epoch (MAE, mL/phút/1,73m²)" h={340}
+        note={`Điểm phạt = Val MAE + 0.5 × max(Val − Train, 0). Mô hình được chọn ở epoch ${best.epoch} (Train ${best.train.toFixed(3)}, Val ${best.val.toFixed(3)}); dừng sớm khi không cải thiện. Tổng ${ep.length} epoch.`}>
+        <LineChart data={ep} margin={{ right: 20 }}>
+          <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+          <XAxis dataKey="epoch" tick={{ fontSize: 12 }} label={{ value: 'Epoch', position: 'insideBottom', offset: -2, fontSize: 12 }} />
+          <YAxis domain={['auto', 'auto']} tick={{ fontSize: 12 }} /><Tooltip formatter={(v: any) => Number(v).toFixed(3)} /><Legend verticalAlign="top" />
+          <ReferenceLine x={best.epoch} stroke={C.warn} strokeDasharray="4 4" label={{ value: `Tốt nhất: epoch ${best.epoch}`, position: 'insideTopRight', fontSize: 11, fill: C.warn }} />
+          <Line isAnimationActive={false} type="monotone" dataKey="train" name="Train MAE" stroke={C.gru} dot={false} strokeWidth={2} />
+          <Line isAnimationActive={false} type="monotone" dataKey="val" name="Validation MAE" stroke={C.lstm} dot={false} strokeWidth={2} />
+          <Line isAnimationActive={false} type="monotone" dataKey="diem" name="Điểm phạt (early stopping)" stroke="#64748b" strokeDasharray="5 4" dot={false} />
+        </LineChart>
+      </Chart>
+      <Chart title="Learning Curve theo số bệnh nhân Train (trung bình 3 seed)" h={340}
+        note={`Tăng dữ liệu từ 20% lên 100%: Val MAE giảm ${ld[0].val_mean.toFixed(2)} → ${last.val_mean.toFixed(2)}, khoảng cách Val−Train ${ld[0].gap.toFixed(2)} → ${last.gap.toFixed(2)}. Đường Validation vẫn đi xuống ở 100% dữ liệu: thêm dữ liệu có thể còn cải thiện mô hình.`}>
+        <LineChart data={ld} margin={{ right: 20, top: 18 }}>
+          <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+          <XAxis dataKey="so_bn" type="number" domain={[100, 850]} ticks={ld.map((r) => r.so_bn)} tick={{ fontSize: 12 }} label={{ value: 'Số bệnh nhân Train', position: 'insideBottom', offset: -2, fontSize: 12 }} />
+          <YAxis domain={[3.2, 5]} tick={{ fontSize: 12 }} /><Tooltip formatter={(v: any) => Number(v).toFixed(3)} /><Legend verticalAlign="top" />
+          <Line isAnimationActive={false} dataKey="train_mean" name="Train MAE" stroke={C.gru} strokeWidth={2} dot={{ r: 4 }} label={lab(2)} />
+          <Line isAnimationActive={false} dataKey="val_mean" name="Validation MAE" stroke={C.lstm} strokeWidth={2} dot={{ r: 4 }} label={lab(2)} />
+        </LineChart>
+      </Chart>
+      <Grid2>
+        <Chart title="Khoảng cách Val − Train theo lượng dữ liệu" note="Khoảng cách lớn nhất ở 478 bệnh nhân rồi ổn định quanh 0.46–0.50: quá khớp không tăng thêm khi có nhiều dữ liệu hơn.">
+          <BarChart data={ld} margin={{ top: 18 }}><CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" /><XAxis dataKey="so_bn" tick={{ fontSize: 12 }} /><YAxis /><Tooltip />
+            <Bar isAnimationActive={false} dataKey="gap" name="Val − Train" fill={C.rep} label={lab(3)} /></BarChart>
         </Chart>
-        <Note>Điểm phạt = Val MAE + 0.5 × max(Val − Train, 0); mô hình được chọn ở epoch có điểm phạt thấp nhất (epoch {best.epoch}: Train {best.train.toFixed(3)}, Val {best.val.toFixed(3)}), sau đó dừng sớm khi không cải thiện. Chạy {ep.length} epoch.</Note>
-      </Card>
-      <Card title="Learning Curve theo lượng dữ liệu huấn luyện">
-        <Chart h={320} label="Đường cong học tập theo lượng dữ liệu: MAE Train và Validation theo số bệnh nhân">
-          <ComposedChart data={ld} margin={{ right: 20 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-            <XAxis dataKey="so_bn" type="number" domain={[100, 850]} ticks={ld.map((r) => r.so_bn)} tick={{ fontSize: 12 }} label={{ value: 'Số bệnh nhân Train', position: 'insideBottom', offset: -2, fontSize: 12 }} />
-            <YAxis domain={[3.2, 5]} tick={{ fontSize: 12 }} /><Tooltip formatter={(v: any) => Number(v).toFixed(3)} /><Legend verticalAlign="top" />
-            <Line isAnimationActive={false} dataKey="train_mean" name="Train MAE (TB 3 seed)" stroke={C.gru} strokeWidth={2} />
-            <Line isAnimationActive={false} dataKey="val_mean" name="Validation MAE (TB 3 seed)" stroke={C.lstm} strokeWidth={2} />
-          </ComposedChart>
+        <Chart title="Độ lệch chuẩn giữa 3 seed (độ ổn định huấn luyện)" note="SD của Train MAE giảm mạnh khi có nhiều dữ liệu (0.265 → 0.029): kết quả ổn định hơn.">
+          <BarChart data={ld} margin={{ top: 18 }}><CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" /><XAxis dataKey="so_bn" tick={{ fontSize: 12 }} /><YAxis /><Tooltip formatter={(v: any) => Number(v).toFixed(3)} /><Legend />
+            <Bar isAnimationActive={false} dataKey="train_std" name="SD Train" fill={C.gru} label={lab(3)} /><Bar isAnimationActive={false} dataKey="val_std" name="SD Validation" fill={C.lstm} label={lab(3)} /></BarChart>
         </Chart>
-        <Table head={['Số BN Train', 'Train MAE (TB)', 'Train SD', 'Validation MAE (TB)', 'Validation SD', 'Val − Train']}>
-          {ld.map((r) => (<tr key={r.so_bn}><Td>{r.so_bn}</Td><Td>{f3(r.train_mean)}</Td><Td>{f3(r.train_std)}</Td><Td>{f3(r.val_mean)}</Td><Td>{f3(r.val_std)}</Td><Td>{(r.val_mean - r.train_mean).toFixed(3)}</Td></tr>))}
-        </Table>
-        <Note>Khi tăng dữ liệu từ 20% lên 100%, Val MAE giảm {ld[0].val_mean.toFixed(2)} → {last.val_mean.toFixed(2)} và khoảng cách Val−Train thu hẹp từ {(ld[0].val_mean - ld[0].train_mean).toFixed(2)} xuống {(last.val_mean - last.train_mean).toFixed(2)}. Đường Validation vẫn đi xuống ở 100% dữ liệu, gợi ý thêm dữ liệu có thể còn cải thiện mô hình.</Note>
-      </Card>
+      </Grid2>
     </>
   )
 }
 
-/* ============================ Kết quả huấn luyện (Train/Val) ============================ */
+/* ============================ Kết quả huấn luyện ============================ */
 function Training({ E }: { E: Evaluation }) {
   const P = E.project, D = E.deployed
-  const monthData = ['18', '24', '30', '36'].map((m) => ({ month: `Tháng ${m}`, Train: +D.sets.Train.regression.per_month![m].mae.toFixed(2), Validation: +D.sets.Validation.regression.per_month![m].mae.toFixed(2) }))
+  const tv: [string, string][] = [['Train', C.train], ['Validation', C.val]]
+  const acc = P.accuracy_train_val
+  const pc = (k: string) => (s: string) => num(acc[k]?.[s as 'Train'])
+  const monthMae = MONTHS.map((m) => ({ name: `Tháng ${m}`, Train: r2(D.sets.Train.regression.per_month![m].mae), Validation: r2(D.sets.Validation.regression.per_month![m].mae) }))
+  const monthRmse = MONTHS.map((m) => ({ name: `Tháng ${m}`, Train: r2(D.sets.Train.regression.per_month![m].rmse), Validation: r2(D.sets.Validation.regression.per_month![m].rmse) }))
+  const clusters = CLUSTER_ORDER.map((c) => ({ name: c, Train: D.sets.Train.cluster.counts[c], Validation: D.sets.Validation.cluster.counts[c] }))
+  const stageData = ['G2', 'G3a', 'G3b', 'G4', 'G5'].map((g) => ({ name: g, Train: r2(D.sets.Train.regression.mae_by_stage![g]?.mae ?? NaN), Validation: r2(D.sets.Validation.regression.mae_by_stage![g]?.mae ?? NaN) }))
+  const samples = P.sample_counts.filter((r) => /^\d+$/.test(r.Train) && /^\d+$/.test(r.Validation)).map((r) => ({ name: r.name.length > 42 ? r.name.slice(0, 40) + '…' : r.name, Train: +r.Train, Validation: +r.Validation }))
   return (
     <>
-      <Card title="Kết quả huấn luyện toàn dự án (Train và Validation)">
-        <div className="grid gap-6 lg:grid-cols-2">
-          <div>
-            <Table head={['Chỉ số', 'Train', 'Validation']}>
-              {Object.entries(P.accuracy_train_val).map(([k, v]) => (<tr key={k}><Td className="font-medium">{k}</Td><Td>{v.Train}</Td><Td>{v.Validation}</Td></tr>))}
-              {(['GRU – MAE', 'GRU – RMSE', 'GRU – R²', 'KMeans – η²', 'KMeans – AUC suy giảm nhanh'] as const).map((k) => (
-                <tr key={k}><Td className="font-medium">{k}</Td><Td>{P.final_summary[k].Train}</Td><Td>{P.final_summary[k].Validation}</Td></tr>))}
-            </Table>
-          </div>
-          <Chart h={280} label="Biểu đồ cột MAE theo mốc thời gian, Train và Validation">
-            <BarChart data={monthData}><CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" /><XAxis dataKey="month" /><YAxis /><Tooltip /><Legend />
-              <Bar isAnimationActive={false} dataKey="Train" fill={C.train} label={{ position: 'top', fontSize: 11 }} /><Bar isAnimationActive={false} dataKey="Validation" fill={C.val} label={{ position: 'top', fontSize: 11 }} /></BarChart>
-          </Chart>
-        </div>
-        <Note>MAE có xu hướng tăng khi dự đoán xa hơn (18 → 36 tháng). Độ nhạy phát hiện suy giảm nhanh trên Validation chỉ 44.0% (Train 55.5%).</Note>
-      </Card>
-      <Card title="Cỡ mẫu của từng phép đánh giá">
-        <Table head={['Phép đánh giá', 'Train', 'Validation']}>
-          {P.sample_counts.map((r) => (<tr key={r.name}><Td>{r.name}</Td><Td>{r.Train}</Td><Td>{r.Validation}</Td></tr>))}
-        </Table>
-      </Card>
+      <Alert kind="info">Kết quả huấn luyện toàn dự án trên Train ({E.dataset.Train} BN) và Validation ({E.dataset.Validation} BN), trọng số triển khai. Tập Test chỉ dùng một lần ở tab “Kết quả kiểm thử”.</Alert>
+      <Grid2>
+        <Grouped title="MAE theo mốc dự đoán (mL/phút/1,73m²)" data={monthMae} series={tv} d={2} note="Có xu hướng tăng khi dự đoán xa hơn (18 → 36 tháng)." />
+        <Grouped title="RMSE theo mốc dự đoán (mL/phút/1,73m²)" data={monthRmse} series={tv} d={2} />
+        <Grouped title="Độ chính xác dự đoán eGFR (%)" h={320}
+          data={bySetTV([['Lệch ≤ 5', pc('GRU – dự đoán lệch ≤ 5')], ['Lệch ≤ 10', pc('GRU – dự đoán lệch ≤ 10')], ['100% − MAPE', pc('GRU – độ chính xác theo % (100% − MAPE)')], ['Đúng xu hướng', pc('GRU – đúng xu hướng (giảm / không giảm)')]])}
+          series={tv} d={1} unit="%" domain={[0, 105]} />
+        <Grouped title="Phân cụm và giai đoạn CKD (%)" h={320}
+          data={bySetTV([['Accuracy', pc('KMeans – Accuracy')], ['Độ nhạy', pc('KMeans – Độ nhạy')], ['Độ đặc hiệu', pc('KMeans – Độ đặc hiệu')], ['Đúng G 36 th.', pc('Hệ thống – đúng giai đoạn CKD 36M')], ['Lệch ≤ 1 G', pc('Hệ thống – lệch ≤ 1 giai đoạn')]])}
+          series={tv} d={1} unit="%" domain={[0, 105]} note="Độ nhạy chỉ 44.0% trên Validation (Train 55.5%)." />
+        <Grouped title="MAE theo giai đoạn eGFR thực tế" data={stageData} series={tv} d={2} />
+        <Grouped title="Số bệnh nhân mỗi nhóm cụm" data={clusters} series={tv} d={0} />
+      </Grid2>
+      <Chart title="Cỡ mẫu của từng phép đánh giá (số bệnh nhân)" h={Math.max(260, samples.length * 70)}>
+        <BarChart data={samples} layout="vertical" margin={{ left: 30, right: 40 }}>
+          <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" /><XAxis type="number" /><YAxis type="category" dataKey="name" width={260} tick={{ fontSize: 11 }} /><Tooltip /><Legend />
+          <Bar isAnimationActive={false} dataKey="Train" fill={C.train} label={{ position: 'right', fontSize: 10 }} /><Bar isAnimationActive={false} dataKey="Validation" fill={C.val} label={{ position: 'right', fontSize: 10 }} /></BarChart>
+      </Chart>
     </>
   )
 }
 
-/* ============================ Kết quả kiểm thử (Test) ============================ */
+/* ============================ Kết quả kiểm thử ============================ */
 function Testing({ E }: { E: Evaluation }) {
-  const R = E.reported, D = E.deployed, dt = D.sets.Test.cluster, cm = dt.confusion
-  const fs = E.project.final_summary
-  const monthData = ['18', '24', '30', '36'].map((m) => ({ month: `Tháng ${m}`, ...Object.fromEntries(SETS.map((s) => [s, +D.sets[s].regression.per_month![m].mae.toFixed(2)])) }))
+  const R = E.reported, D = E.deployed, dt = D.sets.Test.cluster, cm = dt.confusion, fs = E.project.final_summary
+  const rep: [string, string][] = [['Theo báo cáo', C.rep], ['Trọng số triển khai', C.test]]
+  const risk = R.risk_detection_test
+  const fsv = (k: string) => (s: string) => num(fs[k][s as 'Train'])
+  const monthData = MONTHS.map((m) => ({ name: `Tháng ${m}`, ...Object.fromEntries(SETS.map((s) => [s, r2(D.sets[s].regression.per_month![m].mae)])) }))
   const clusterData = CLUSTER_ORDER.map((c) => ({ name: c, ...Object.fromEntries(SETS.map((s) => [s, D.sets[s].cluster.counts[c]])) }))
+  const conf = [{ name: 'TN (đúng: không suy giảm nhanh)', v: cm.tn, c: '#16a34a' }, { name: 'FP (báo nhầm suy giảm nhanh)', v: cm.fp, c: '#f59e0b' },
+    { name: 'FN (bỏ sót suy giảm nhanh)', v: cm.fn, c: C.warn }, { name: 'TP (đúng: suy giảm nhanh)', v: cm.tp, c: '#16a34a' }]
+  const stage36 = SETS.map((s) => ({ name: s, 'Đúng giai đoạn': r2(D.sets[s].regression.stage36!.exact * 100), 'Lệch ≤ 1 giai đoạn': r2(D.sets[s].regression.stage36!.within1 * 100) }))
   return (
     <>
-      <Card title="Kết quả kiểm thử toàn dự án trên tập Test (một lần duy nhất)">
-        <Table head={['Chỉ số', 'Train', 'Validation', 'Test']}>
-          {Object.entries(fs).map(([k, v]) => (<tr key={k}><Td className="font-medium">{k}</Td><Td>{v.Train}</Td><Td>{v.Validation}</Td><Td className="bg-slate-50 font-medium">{v.Test}</Td></tr>))}
-        </Table>
-        <Note>Trọng số triển khai. Test có {D.sets.Test.regression.n_patients} bệnh nhân có nhãn thật ở ít nhất một mốc ({D.sets.Test.regression.n_values} giá trị). Phân nhóm Test: {CLUSTER_ORDER.map((c) => `${c} ${dt.counts[c]}`).join(' · ')}; thứ tự nhóm theo tốc độ eGFR thật: {dt.order_ok ? 'đúng' : 'sai'}.</Note>
-      </Card>
-
-      <Card title="Phát hiện suy giảm nhanh (Test)">
-        <Table head={['Chỉ số', 'Theo báo cáo', 'Tái tính (triển khai)']}>
-          <tr><Td><Tip k="AUC" /></Td><Td>{f3(R.risk_detection_test.auc)}</Td><Td className="bg-slate-50">{f3(dt.auc)}</Td></tr>
-          <tr><Td>Accuracy</Td><Td>{pct(R.risk_detection_test.accuracy)}</Td><Td className="bg-slate-50">{pct(dt.accuracy)}</Td></tr>
-          <tr><Td>Sensitivity (độ nhạy)</Td><Td>{pct(R.risk_detection_test.sensitivity)}</Td><Td className="bg-slate-50">{pct(dt.sensitivity)}</Td></tr>
-          <tr><Td>Specificity (độ đặc hiệu)</Td><Td>{pct(R.risk_detection_test.specificity)}</Td><Td className="bg-slate-50">{pct(dt.specificity)}</Td></tr>
-        </Table>
-        <div className="mt-4 grid gap-6 md:grid-cols-2">
-          <div>
-            <p className="mb-2 text-sm font-medium">Ma trận nhầm lẫn – Test, trọng số triển khai (n = {dt.n_eval})</p>
-            <table className="w-full max-w-sm border-collapse text-center text-sm" aria-label="Ma trận nhầm lẫn">
-              <thead><tr><th></th><th className="border p-2">Dự đoán: không thuộc nhóm xấu</th><th className="border p-2">Dự đoán: Chuyển biến xấu</th></tr></thead>
-              <tbody>
-                <tr><th className="border p-2 text-left">Thực tế: không suy giảm nhanh</th><td className="border p-2">TN = <b>{cm.tn}</b></td><td className="border p-2">FP = <b>{cm.fp}</b></td></tr>
-                <tr><th className="border p-2 text-left">Thực tế: suy giảm nhanh</th><td className="border p-2">FN = <b>{cm.fn}</b></td><td className="border p-2">TP = <b>{cm.tp}</b></td></tr>
-              </tbody>
-            </table>
-          </div>
-          <Alert kind="warn" title="Giới hạn cần lưu ý">
-            Ngưỡng “suy giảm nhanh” là eGFR ≤ {D.fast_decline_threshold.toFixed(2)} mL/phút/1,73m²/năm, xác định thực nghiệm từ Train (25% thấp nhất tốc độ eGFR thật), không phải ngưỡng chẩn đoán phổ quát. Độ nhạy ~{pct(R.risk_detection_test.sensitivity, 0)} nghĩa là mô hình còn bỏ sót gần một nửa số trường hợp suy giảm nhanh; không dùng nhãn này để loại trừ nguy cơ.
-          </Alert>
-        </div>
-      </Card>
-
-      <Card title="So sánh dự đoán với thực tế (Test, trọng số triển khai)">
-        <div className="grid gap-6 lg:grid-cols-2">
-          <div>
-            <p className="mb-1 text-sm font-medium">eGFR thực tế so với dự đoán (đường chéo = hoàn hảo)</p>
-            <Chart h={320} label="Biểu đồ phân tán eGFR thực tế và dự đoán trên tập Test">
-              <ScatterChart margin={{ left: 0, right: 10, top: 10, bottom: 20 }}><CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                <XAxis type="number" dataKey="actual" name="Thực tế" domain={[0, 120]} label={{ value: 'eGFR thực tế', position: 'insideBottom', offset: -10, fontSize: 12 }} />
-                <YAxis type="number" dataKey="predicted" name="Dự đoán" domain={[0, 120]} label={{ value: 'eGFR dự đoán', angle: -90, position: 'insideLeft', fontSize: 12 }} />
-                <ReferenceLine segment={[{ x: 0, y: 0 }, { x: 120, y: 120 }]} stroke={C.warn} strokeDasharray="5 5" /><Tooltip cursor={{ strokeDasharray: '3 3' }} />
-                <Scatter isAnimationActive={false} data={D.scatter_test} fill={C.test} fillOpacity={0.45} /></ScatterChart>
-            </Chart>
-          </div>
-          <div>
-            <p className="mb-1 text-sm font-medium">MAE theo mốc thời gian (Train / Validation / Test)</p>
-            <Chart h={320} label="Biểu đồ cột MAE theo mốc thời gian">
-              <BarChart data={monthData}><CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" /><XAxis dataKey="month" /><YAxis /><Tooltip /><Legend />
-                <Bar isAnimationActive={false} dataKey="Train" fill={C.train} /><Bar isAnimationActive={false} dataKey="Validation" fill={C.val} /><Bar isAnimationActive={false} dataKey="Test" fill={C.test} /></BarChart>
-            </Chart>
-          </div>
-          <div className="lg:col-span-2">
-            <p className="mb-1 text-sm font-medium">Phân bố nhãn cụm theo tập</p>
-            <Chart h={260} label="Biểu đồ cột phân bố nhãn cụm">
-              <BarChart data={clusterData}><CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" /><XAxis dataKey="name" tick={{ fontSize: 12 }} /><YAxis /><Tooltip /><Legend />
-                <Bar isAnimationActive={false} dataKey="Train" fill={C.train} /><Bar isAnimationActive={false} dataKey="Validation" fill={C.val} /><Bar isAnimationActive={false} dataKey="Test" fill={C.test} /></BarChart>
-            </Chart>
-          </div>
-        </div>
-      </Card>
+      <Alert kind="info">Kiểm thử trên tập Test ({D.sets.Test.regression.n_patients} BN có nhãn thật, {D.sets.Test.regression.n_values} giá trị). Test chỉ chạy một lần duy nhất; trọng số triển khai.</Alert>
+      <Grid2>
+        <Grouped title="MAE theo mốc thời gian: Train / Validation / Test" data={monthData} series={setSeries} d={2} />
+        <Grouped title="Sai số hồi quy theo tập" data={bySet([['MAE', (s) => r3(D.sets[s].regression.mae)], ['RMSE', (s) => r3(D.sets[s].regression.rmse)]])} series={setSeries} d={2} />
+        <Grouped title="Giai đoạn CKD ở tháng 36 (%)" data={stage36} series={[['Đúng giai đoạn', C.test], ['Lệch ≤ 1 giai đoạn', C.gru]]} d={1} unit="%" domain={[0, 105]}
+          note={`Test: đúng ${fs['Hệ thống – đúng giai đoạn 36M'].Test}, lệch ≤ 1 giai đoạn ${fs['Hệ thống – lệch ≤ 1 giai đoạn'].Test}.`} />
+        <Grouped title="Phân bố nhãn cụm theo tập (số bệnh nhân)" data={clusterData} series={setSeries} d={0} />
+        <Grouped title="Phát hiện suy giảm nhanh (Test): Accuracy, độ nhạy, độ đặc hiệu (%)" h={320}
+          data={[{ name: 'Accuracy', 'Theo báo cáo': r2(risk.accuracy * 100), 'Trọng số triển khai': r2(dt.accuracy * 100) }, { name: 'Độ nhạy', 'Theo báo cáo': r2(risk.sensitivity * 100), 'Trọng số triển khai': r2((dt.sensitivity ?? 0) * 100) },
+            { name: 'Độ đặc hiệu', 'Theo báo cáo': r2(risk.specificity * 100), 'Trọng số triển khai': r2((dt.specificity ?? 0) * 100) }]} series={rep} d={1} unit="%" domain={[0, 100]}
+          note={`Ngưỡng “suy giảm nhanh”: eGFR ≤ ${D.fast_decline_threshold.toFixed(2)} mL/phút/1,73m²/năm, xác định thực nghiệm từ Train, không phải ngưỡng chẩn đoán. Độ nhạy ~${(risk.sensitivity * 100).toFixed(0)}% nghĩa là còn bỏ sót gần một nửa ca suy giảm nhanh.`} />
+        <Grouped title="AUC phát hiện suy giảm nhanh (Test)" data={[{ name: 'AUC', 'Theo báo cáo': risk.auc, 'Trọng số triển khai': r3(dt.auc) }]} series={rep} d={3} domain={[0, 1]} h={320} ref={{ y: 0.5, label: 'Ngẫu nhiên = 0.5' }} />
+      </Grid2>
+      <Grid2>
+        <Chart title={`Ma trận nhầm lẫn dạng cột – Test (n = ${dt.n_eval}, trọng số triển khai)`} h={300} note="Dự đoán dương tính = nhóm K-Means “Chuyển biến xấu”; thực tế dương tính = suy giảm nhanh.">
+          <BarChart data={conf} layout="vertical" margin={{ left: 40, right: 30 }}><CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" /><XAxis type="number" /><YAxis type="category" dataKey="name" width={210} tick={{ fontSize: 11 }} /><Tooltip />
+            <Bar isAnimationActive={false} dataKey="v" name="Số bệnh nhân" label={{ position: 'right', fontSize: 11 }}>{conf.map((c, i) => <Cell key={i} fill={c.c} />)}</Bar></BarChart>
+        </Chart>
+        <Chart title="eGFR thực tế so với dự đoán – Test (đường chéo = hoàn hảo)" h={300}>
+          <ScatterChart margin={{ left: 0, right: 10, top: 10, bottom: 20 }}><CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+            <XAxis type="number" dataKey="actual" name="Thực tế" domain={[0, 120]} label={{ value: 'eGFR thực tế', position: 'insideBottom', offset: -10, fontSize: 12 }} />
+            <YAxis type="number" dataKey="predicted" name="Dự đoán" domain={[0, 120]} label={{ value: 'eGFR dự đoán', angle: -90, position: 'insideLeft', fontSize: 12 }} />
+            <ReferenceLine segment={[{ x: 0, y: 0 }, { x: 120, y: 120 }]} stroke={C.warn} strokeDasharray="5 5" /><Tooltip cursor={{ strokeDasharray: '3 3' }} />
+            <Scatter isAnimationActive={false} data={D.scatter_test} fill={C.test} fillOpacity={0.45} /></ScatterChart>
+        </Chart>
+      </Grid2>
+      <Grouped title="Kết quả kiểm thử toàn dự án – phân cụm và phát hiện nguy cơ (thang 0–100)" h={320}
+        data={bySet([['AUC×100', (s) => r2(fsv('KMeans – AUC suy giảm nhanh')(s) * 100)], ['η²×100', (s) => r2(fsv('KMeans – η²')(s) * 100)], ['Accuracy %', fsv('KMeans – Accuracy')], ['Độ nhạy %', fsv('KMeans – Độ nhạy')], ['Độ đặc hiệu %', fsv('KMeans – Độ đặc hiệu')]])}
+        series={setSeries} d={1} domain={[0, 100]} note="AUC và η² được nhân 100 để vẽ chung thang với các tỷ lệ phần trăm." />
     </>
   )
 }
@@ -307,60 +312,39 @@ function Testing({ E }: { E: Evaluation }) {
 function Reliability({ E }: { E: Evaluation }) {
   const { reliability: rel, sets } = E.deployed
   const rob = E.project.robustness
-  const stage = Object.entries(sets.Test.regression.mae_by_stage!).map(([g, v]) => ({ stage: g, MAE: +v.mae.toFixed(2), n: v.n }))
   const cal = rel.calibration.map((r) => ({ ...r, err: r.y_sd ?? 0 }))
-  const robChart = rob.Test.map((r, i) => ({ kich_ban: r.kich_ban, 'MAE Test': +r.mae.toFixed(2), 'MAE Validation': +rob.Validation[i].mae.toFixed(2) }))
+  const band = rel.interval_90.map((r) => ({ name: `Tháng ${r.month}`, 'Khoảng sai số 90%': [r2(r.lower), r2(r.upper)], 'Độ phủ': r2(r.coverage * 100) }))
+  const stageData = ['G2', 'G3a', 'G3b', 'G4', 'G5'].map((g) => ({ name: g, ...Object.fromEntries(SETS.map((s) => [s, r2(sets[s].regression.mae_by_stage![g]?.mae ?? NaN)])) }))
+  const scen = rob.Test.map((r, i) => ({ name: r.kich_ban, 'MAE Validation': r2(rob.Validation[i].mae), 'MAE Test': r2(r.mae), 'AUC Test': r3(r.auc), 'AUC Validation': r3(rob.Validation[i].auc), 'Giữ nhóm Test': r2(r.giu_nhom * 100), 'Giữ nhóm Validation': r2(rob.Validation[i].giu_nhom * 100) }))
   return (
     <>
-      <Alert kind="info">Các biểu đồ dưới đây đánh giá mức đáng tin của dự đoán trên tập Test: khoảng dự đoán 90%, hiệu chỉnh (calibration), sai số theo giai đoạn CKD và độ bền khi bệnh nhân khám thiếu. {rel.interval_note}</Alert>
-      <Card title="E1. Khoảng dự đoán 90% và độ phủ trên Test">
-        <div className="grid gap-6 lg:grid-cols-2">
-          <Table head={['Mốc', 'Khoảng (thực tế − dự đoán)', 'Nửa độ rộng ±', 'Độ phủ Test']}>
-            {rel.interval_90.map((r) => (<tr key={r.month}><Td>Tháng {r.month}</Td><Td>[{r.lower.toFixed(1)}; {r.upper.toFixed(1)}]</Td><Td>{r.half_width.toFixed(1)}</Td><Td className="font-medium">{pct(r.coverage, 0)}</Td></tr>))}
-          </Table>
-          <Chart h={240} label="Biểu đồ độ phủ của khoảng dự đoán 90% theo mốc, so với mục tiêu 90%">
-            <BarChart data={rel.interval_90.map((r) => ({ month: `Tháng ${r.month}`, 'Độ phủ': +(r.coverage * 100).toFixed(1) }))}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" /><XAxis dataKey="month" /><YAxis domain={[0, 100]} unit="%" /><Tooltip formatter={(v: any) => `${v}%`} />
-              <ReferenceLine y={90} stroke={C.warn} strokeDasharray="5 4" label={{ value: 'Mục tiêu 90%', position: 'insideTopRight', fontSize: 11, fill: C.warn }} />
-              <Bar isAnimationActive={false} dataKey="Độ phủ" fill={C.test} label={{ position: 'top', fontSize: 11, formatter: (v: any) => `${v}%` }} /></BarChart>
-          </Chart>
-        </div>
-        <Note>Độ phủ gần 90% (85–96%) cho thấy khoảng ± này khá hợp lý trên Test, nhưng khoảng khá rộng (±7 → ±11 mL/phút/1,73m² từ 18 đến 36 tháng). Phương pháp chưa được xác thực thống kê nên giao diện bệnh nhân không hiển thị dải bất định.</Note>
-      </Card>
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Card title="E2. Hiệu chỉnh: dự đoán trung bình so với thực tế trung bình (10 nhóm, Test)">
-          <Chart h={300} label="Biểu đồ hiệu chỉnh: eGFR dự đoán trung bình so với thực tế trung bình theo 10 nhóm">
-            <ComposedChart data={cal} margin={{ right: 12 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-              <XAxis dataKey="p_mean" type="number" domain={[0, 80]} tickFormatter={(v) => Number(v).toFixed(0)} label={{ value: 'eGFR dự đoán trung bình', position: 'insideBottom', offset: -2, fontSize: 12 }} />
-              <YAxis domain={[0, 80]} label={{ value: 'eGFR thực tế trung bình', angle: -90, position: 'insideLeft', fontSize: 12 }} /><Tooltip formatter={(v: any) => Number(v).toFixed(1)} />
-              <ReferenceLine segment={[{ x: 0, y: 0 }, { x: 80, y: 80 }]} stroke={C.warn} strokeDasharray="5 5" />
-              <Line isAnimationActive={false} dataKey="y_mean" name="Thực tế TB (± SD)" stroke={C.test} strokeWidth={2} dot={{ r: 4 }}><ErrorBar dataKey="err" stroke={C.test} width={4} /></Line>
-            </ComposedChart>
-          </Chart>
-          <Note>Điểm càng sát đường chéo đỏ thì dự đoán càng được hiệu chỉnh tốt. Mỗi điểm là một nhóm 10% giá trị dự đoán (n ≈ {cal[0]?.n}/nhóm).</Note>
-        </Card>
-        <Card title="E3. Sai số MAE theo giai đoạn CKD thực tế (Test)">
-          <Chart h={300} label="Biểu đồ cột MAE theo giai đoạn eGFR thực tế">
-            <BarChart data={stage}><CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" /><XAxis dataKey="stage" /><YAxis /><Tooltip /><Bar isAnimationActive={false} dataKey="MAE" fill={C.test} label={{ position: 'top', fontSize: 11 }} /></BarChart>
-          </Chart>
-          <Note>Số giá trị: {stage.map((s) => `${s.stage}: ${s.n}`).join(' · ')}. Sai số lớn nhất ở G2 (eGFR cao), nơi ít bệnh nhân hơn.</Note>
-        </Card>
-      </div>
-      <Card title="E4. Độ bền khi bệnh nhân khám thiếu (chỉ bệnh nhân khám đủ 3 lần)">
-        <div className="grid gap-6 lg:grid-cols-2">
-          <div>
-            <Table head={['Kịch bản', 'Giữ nhóm (Test)', 'AUC (Test)', 'MAE (Test)', 'MAE (Val)']}>
-              {rob.Test.map((r, i) => (<tr key={r.kich_ban}><Td className="font-medium">{r.kich_ban}</Td><Td>{pct(r.giu_nhom)}</Td><Td>{f3(r.auc)}</Td><Td>{r.mae.toFixed(2)}</Td><Td>{rob.Validation[i].mae.toFixed(2)}</Td></tr>))}
-            </Table>
-          </div>
-          <Chart h={260} label="Biểu đồ cột MAE theo kịch bản khám thiếu, Validation và Test">
-            <BarChart data={robChart}><CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" /><XAxis dataKey="kich_ban" tick={{ fontSize: 11 }} /><YAxis /><Tooltip /><Legend />
-              <Bar isAnimationActive={false} dataKey="MAE Validation" fill={C.val} /><Bar isAnimationActive={false} dataKey="MAE Test" fill={C.test} label={{ position: 'top', fontSize: 11 }} /></BarChart>
-          </Chart>
-        </div>
-        <Note>Khi chỉ có lần đo tháng 0, MAE tăng khoảng 3.5 → 5.9 và nhóm bị đổi cho ~10% bệnh nhân; AUC không giảm (dao động 0.66–0.70, mẫu nhỏ). Vì vậy giao diện hạ “độ tin cậy” xuống Trung bình/Thấp khi thiếu lần đo.</Note>
-      </Card>
+      <Alert kind="info">Độ tin cậy của dự đoán trên Test. {rel.interval_note}</Alert>
+      <Grid2>
+        <Chart title="E1. Khoảng sai số 90% (thực tế − dự đoán) theo mốc" note="Dải nổi cho biết thực tế thường lệch khỏi dự đoán trong khoảng này (mL/phút/1,73m²). Khoảng rộng dần theo mốc: ±7 → ±11.">
+          <BarChart data={band} margin={{ top: 18 }}><CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" /><XAxis dataKey="name" /><YAxis domain={[-14, 14]} /><Tooltip />
+            <ReferenceLine y={0} stroke="#0f172a" /><Bar isAnimationActive={false} dataKey="Khoảng sai số 90%" fill={C.gru} fillOpacity={0.7} /></BarChart>
+        </Chart>
+        <Chart title="E1. Độ phủ của khoảng 90% trên Test (mục tiêu 90%)" note="Độ phủ 85–96% cho thấy khoảng này khá hợp lý trên Test, nhưng chưa được xác thực thống kê nên giao diện bệnh nhân không hiển thị dải bất định.">
+          <BarChart data={band} margin={{ top: 18 }}><CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" /><XAxis dataKey="name" /><YAxis domain={[0, 100]} unit="%" /><Tooltip formatter={(v: any) => `${v}%`} />
+            <ReferenceLine y={90} stroke={C.warn} strokeDasharray="5 4" label={{ value: 'Mục tiêu 90%', position: 'insideBottomRight', fontSize: 11, fill: C.warn }} />
+            <Bar isAnimationActive={false} dataKey="Độ phủ" fill={C.test} label={lab(1, '%')} /></BarChart>
+        </Chart>
+        <Chart title="E2. Hiệu chỉnh: dự đoán trung bình so với thực tế trung bình (10 nhóm, Test)" note={`Điểm càng sát đường chéo đỏ càng được hiệu chỉnh tốt; thanh dọc = độ lệch chuẩn của thực tế trong nhóm (n ≈ ${cal[0]?.n}/nhóm).`}>
+          <ComposedChart data={cal} margin={{ right: 12 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+            <XAxis dataKey="p_mean" type="number" domain={[0, 80]} tickFormatter={(v) => Number(v).toFixed(0)} label={{ value: 'eGFR dự đoán trung bình', position: 'insideBottom', offset: -2, fontSize: 12 }} />
+            <YAxis domain={[0, 80]} label={{ value: 'eGFR thực tế trung bình', angle: -90, position: 'insideLeft', fontSize: 12 }} /><Tooltip formatter={(v: any) => Number(v).toFixed(1)} />
+            <ReferenceLine segment={[{ x: 0, y: 0 }, { x: 80, y: 80 }]} stroke={C.warn} strokeDasharray="5 5" />
+            <Line isAnimationActive={false} dataKey="y_mean" name="Thực tế TB" stroke={C.test} strokeWidth={2} dot={{ r: 4 }}><ErrorBar dataKey="err" stroke={C.test} width={4} /></Line>
+          </ComposedChart>
+        </Chart>
+        <Grouped title="E3. MAE theo giai đoạn CKD thực tế" data={stageData} series={setSeries} d={2} note="Sai số lớn nhất ở G2 (eGFR cao, chỉ 18 giá trị ở Test)." />
+        <Grouped title="E4. Độ bền khi khám thiếu: MAE theo kịch bản" data={scen} series={[['MAE Validation', C.val], ['MAE Test', C.test]]} d={2}
+          note="Chỉ bệnh nhân khám đủ 3 lần. Khi chỉ có lần đo tháng 0, MAE tăng khoảng 3.5 → 5.9; vì vậy giao diện hạ “độ tin cậy” khi thiếu lần đo." />
+        <Grouped title="E4. Tỷ lệ bệnh nhân giữ nguyên nhóm khi khám thiếu (%)" data={scen} series={[['Giữ nhóm Validation', C.val], ['Giữ nhóm Test', C.test]]} d={1} unit="%" domain={[0, 105]} />
+        <Grouped title="E4. AUC phát hiện suy giảm nhanh khi khám thiếu" data={scen} series={[['AUC Validation', C.val], ['AUC Test', C.test]]} d={3} domain={[0, 1]} ref={{ y: 0.5, label: 'Ngẫu nhiên' }}
+          note="AUC không giảm khi thiếu lần đo (dao động 0.65–0.70, mẫu nhỏ nên không kết luận được cải thiện)." />
+      </Grid2>
     </>
   )
 }
