@@ -22,6 +22,7 @@ assert pr.ready, pr.error
 MOC = [18, 24, 30, 36]
 NAMES = ["Chuyển biến xấu", "Ổn định", "Cải thiện"]
 res = {"sets": {}}
+RES = {}
 for name, label in (("train", "Train"), ("val", "Validation"), ("test", "Test")):
     df = pd.read_excel(demo / f"{name}.xlsx")
     Vh = np.stack([df.eGFR_0M_in, np.where(df.obs_6M == 1, df.eGFR_6M_in, np.nan),
@@ -74,9 +75,26 @@ for name, label in (("train", "Train"), ("val", "Validation"), ("test", "Test"))
         specificity=float(tn / (tn + fp)) if tn + fp else None,
         confusion=dict(tn=int(tn), fp=int(fp), fn=int(fn), tp=int(tp)))
     res["sets"][label] = dict(regression=reg, cluster=cluster)
+    RES[name] = (Y, P, m)
     if name == "test":  # điểm thực tế vs dự đoán (ẩn danh, không kèm ID)
         res["scatter_test"] = [dict(month=mo, actual=round(float(Y[i, k]), 2), predicted=round(float(P[i, k]), 2))
                                for k, mo in enumerate(MOC) for i in np.where(m[:, k])[0]]
+# E. Độ tin cậy (ô 10): khoảng dự đoán 90% lấy từ phân vị phần dư VALIDATION, kiểm tra độ phủ trên TEST
+Yv, Pv, Mv = RES["val"]
+Yt, Pt, Mt = RES["test"]
+interval = []
+for k, mo in enumerate(MOC):
+    lo, hi = np.quantile((Yv - Pv)[:, k][Mv[:, k]], [0.05, 0.95])
+    cov = np.mean((Yt[:, k][Mt[:, k]] >= Pt[:, k][Mt[:, k]] + lo) & (Yt[:, k][Mt[:, k]] <= Pt[:, k][Mt[:, k]] + hi))
+    interval.append(dict(month=mo, lower=float(lo), upper=float(hi), half_width=float((hi - lo) / 2), coverage=float(cov)))
+y_f, p_f = Yt[Mt], Pt[Mt]
+edges = np.unique(np.quantile(p_f, np.linspace(0, 1, 11)))
+grp = np.clip(np.digitize(p_f, edges[1:-1]), 0, len(edges) - 2)
+cal = pd.DataFrame({"p": p_f, "y": y_f, "b": grp}).groupby("b").agg(p_mean=("p", "mean"), y_mean=("y", "mean"), y_sd=("y", "std"), n=("y", "size"))
+res["reliability"] = dict(
+    interval_90=interval,
+    interval_note="Khoảng 90% = phân vị 5%-95% của phần dư (thực tế - dự đoán) trên Validation; độ phủ đo trên Test. Đây là khoảng thực nghiệm, chưa phải khoảng tin cậy thống kê.",
+    calibration=[dict(bin=int(i), p_mean=float(r.p_mean), y_mean=float(r.y_mean), y_sd=None if np.isnan(r.y_sd) else float(r.y_sd), n=int(r.n)) for i, r in cal.iterrows()])
 res["fast_decline_threshold"] = pr.fast_decline_threshold
 json.dump(res, open(ROOT / "app" / "data" / "evaluation_computed.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 for k, v in res["sets"].items():

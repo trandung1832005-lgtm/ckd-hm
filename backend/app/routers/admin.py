@@ -60,7 +60,8 @@ def update_user(user_id: int, body: AdminUserUpdate, request: Request, admin: Us
 def _evaluation() -> dict:
     computed = json.loads((DATA / "evaluation_computed.json").read_text(encoding="utf-8"))
     reported = json.loads((DATA / "evaluation_reported.json").read_text(encoding="utf-8"))
-    return {"deployed": computed, "reported": reported,
+    project = json.loads((DATA / "evaluation_project.json").read_text(encoding="utf-8"))
+    return {"deployed": computed, "reported": reported, "project": project,
             "dataset": {"Train": 796, "Validation": 171, "Test": 171,
                         "note": "Số bệnh nhân mỗi tập (train.xlsx / val.xlsx / test.xlsx)."},
             "scope_note": "Đây là chỉ số ĐÁNH GIÁ OFFLINE trên các tập Train/Validation/Test của nghiên cứu. "

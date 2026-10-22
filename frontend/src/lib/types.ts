@@ -144,6 +144,20 @@ export interface Evaluation {
     sets: Record<string, { regression: RegSet; cluster: ClusterEval }>
     scatter_test: { month: number; actual: number; predicted: number }[]
     fast_decline_threshold: number
+    reliability: {
+      interval_90: { month: number; lower: number; upper: number; half_width: number; coverage: number }[]
+      interval_note: string
+      calibration: { bin: number; p_mean: number; y_mean: number; y_sd: number | null; n: number }[]
+    }
+  }
+  project: {
+    learning_epoch: { epoch: number; train: number; val: number; diem: number; lr: number }[]
+    learning_data: { so_bn: number; train_mean: number; train_std: number; val_mean: number; val_std: number }[]
+    learning_note: string
+    robustness: Record<'Validation' | 'Test', { kich_ban: string; giu_nhom: number; auc: number; mae: number }[]>
+    final_summary: Record<string, Record<'Train' | 'Validation' | 'Test', string>>
+    accuracy_train_val: Record<string, Record<'Train' | 'Validation', string>>
+    sample_counts: { name: string; Train: string; Validation: string }[]
   }
   reported: {
     source: string

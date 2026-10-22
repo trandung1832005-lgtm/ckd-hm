@@ -1,0 +1,690 @@
+{
+ "learning_epoch": [
+  {
+   "epoch": 1,
+   "train": 4.2863,
+   "val": 4.9726,
+   "diem": 5.3158,
+   "lr": 0.0003
+  },
+  {
+   "epoch": 2,
+   "train": 4.1505,
+   "val": 4.7395,
+   "diem": 5.0339,
+   "lr": 0.0003
+  },
+  {
+   "epoch": 3,
+   "train": 4.094,
+   "val": 4.7424,
+   "diem": 5.0666,
+   "lr": 0.0003
+  },
+  {
+   "epoch": 4,
+   "train": 4.0913,
+   "val": 4.7496,
+   "diem": 5.0788,
+   "lr": 0.0003
+  },
+  {
+   "epoch": 5,
+   "train": 4.038,
+   "val": 4.641,
+   "diem": 4.9425,
+   "lr": 0.0003
+  },
+  {
+   "epoch": 6,
+   "train": 4.0258,
+   "val": 4.6196,
+   "diem": 4.9165,
+   "lr": 0.0003
+  },
+  {
+   "epoch": 7,
+   "train": 4.0059,
+   "val": 4.5829,
+   "diem": 4.8713,
+   "lr": 0.0003
+  },
+  {
+   "epoch": 8,
+   "train": 3.9901,
+   "val": 4.5893,
+   "diem": 4.8889,
+   "lr": 0.0003
+  },
+  {
+   "epoch": 9,
+   "train": 3.9805,
+   "val": 4.5747,
+   "diem": 4.8718,
+   "lr": 0.0003
+  },
+  {
+   "epoch": 10,
+   "train": 3.986,
+   "val": 4.5235,
+   "diem": 4.7923,
+   "lr": 0.0003
+  },
+  {
+   "epoch": 11,
+   "train": 3.9654,
+   "val": 4.5104,
+   "diem": 4.7828,
+   "lr": 0.0003
+  },
+  {
+   "epoch": 12,
+   "train": 3.9479,
+   "val": 4.4649,
+   "diem": 4.7235,
+   "lr": 0.0003
+  },
+  {
+   "epoch": 13,
+   "train": 3.9296,
+   "val": 4.4828,
+   "diem": 4.7595,
+   "lr": 0.0003
+  },
+  {
+   "epoch": 14,
+   "train": 3.9283,
+   "val": 4.4667,
+   "diem": 4.7359,
+   "lr": 0.0003
+  },
+  {
+   "epoch": 15,
+   "train": 3.9206,
+   "val": 4.53,
+   "diem": 4.8347,
+   "lr": 0.0003
+  },
+  {
+   "epoch": 16,
+   "train": 3.9081,
+   "val": 4.5355,
+   "diem": 4.8492,
+   "lr": 0.0003
+  },
+  {
+   "epoch": 17,
+   "train": 3.9122,
+   "val": 4.5552,
+   "diem": 4.8767,
+   "lr": 0.0003
+  },
+  {
+   "epoch": 18,
+   "train": 3.8697,
+   "val": 4.404,
+   "diem": 4.6711,
+   "lr": 0.0003
+  },
+  {
+   "epoch": 19,
+   "train": 3.8606,
+   "val": 4.4223,
+   "diem": 4.7032,
+   "lr": 0.0003
+  },
+  {
+   "epoch": 20,
+   "train": 3.8499,
+   "val": 4.3673,
+   "diem": 4.626,
+   "lr": 0.0003
+  },
+  {
+   "epoch": 21,
+   "train": 3.8513,
+   "val": 4.4251,
+   "diem": 4.712,
+   "lr": 0.0003
+  },
+  {
+   "epoch": 22,
+   "train": 3.8313,
+   "val": 4.4028,
+   "diem": 4.6885,
+   "lr": 0.0003
+  },
+  {
+   "epoch": 23,
+   "train": 3.8205,
+   "val": 4.3808,
+   "diem": 4.661,
+   "lr": 0.0003
+  },
+  {
+   "epoch": 24,
+   "train": 3.8003,
+   "val": 4.3735,
+   "diem": 4.66,
+   "lr": 0.0003
+  },
+  {
+   "epoch": 25,
+   "train": 3.7916,
+   "val": 4.3148,
+   "diem": 4.5764,
+   "lr": 0.0003
+  },
+  {
+   "epoch": 26,
+   "train": 3.796,
+   "val": 4.3957,
+   "diem": 4.6955,
+   "lr": 0.0003
+  },
+  {
+   "epoch": 27,
+   "train": 3.7857,
+   "val": 4.2945,
+   "diem": 4.5489,
+   "lr": 0.0003
+  },
+  {
+   "epoch": 28,
+   "train": 3.7779,
+   "val": 4.27,
+   "diem": 4.5161,
+   "lr": 0.0003
+  },
+  {
+   "epoch": 29,
+   "train": 3.78,
+   "val": 4.3578,
+   "diem": 4.6467,
+   "lr": 0.0003
+  },
+  {
+   "epoch": 30,
+   "train": 3.7558,
+   "val": 4.2725,
+   "diem": 4.5309,
+   "lr": 0.0003
+  },
+  {
+   "epoch": 31,
+   "train": 3.7485,
+   "val": 4.2924,
+   "diem": 4.5644,
+   "lr": 0.0003
+  },
+  {
+   "epoch": 32,
+   "train": 3.7414,
+   "val": 4.271,
+   "diem": 4.5358,
+   "lr": 0.0003
+  },
+  {
+   "epoch": 33,
+   "train": 3.7398,
+   "val": 4.2394,
+   "diem": 4.4891,
+   "lr": 0.0003
+  },
+  {
+   "epoch": 34,
+   "train": 3.724,
+   "val": 4.2842,
+   "diem": 4.5644,
+   "lr": 0.0003
+  },
+  {
+   "epoch": 35,
+   "train": 3.7273,
+   "val": 4.2231,
+   "diem": 4.4711,
+   "lr": 0.0003
+  },
+  {
+   "epoch": 36,
+   "train": 3.7099,
+   "val": 4.2373,
+   "diem": 4.501,
+   "lr": 0.0003
+  },
+  {
+   "epoch": 37,
+   "train": 3.7023,
+   "val": 4.2531,
+   "diem": 4.5285,
+   "lr": 0.0003
+  },
+  {
+   "epoch": 38,
+   "train": 3.698,
+   "val": 4.2302,
+   "diem": 4.4963,
+   "lr": 0.0003
+  },
+  {
+   "epoch": 39,
+   "train": 3.6961,
+   "val": 4.2244,
+   "diem": 4.4885,
+   "lr": 0.0003
+  },
+  {
+   "epoch": 40,
+   "train": 3.6945,
+   "val": 4.2233,
+   "diem": 4.4877,
+   "lr": 0.0003
+  },
+  {
+   "epoch": 41,
+   "train": 3.6877,
+   "val": 4.1549,
+   "diem": 4.3884,
+   "lr": 0.0003
+  },
+  {
+   "epoch": 42,
+   "train": 3.6854,
+   "val": 4.2052,
+   "diem": 4.4651,
+   "lr": 0.0003
+  },
+  {
+   "epoch": 43,
+   "train": 3.6827,
+   "val": 4.2368,
+   "diem": 4.5138,
+   "lr": 0.0003
+  },
+  {
+   "epoch": 44,
+   "train": 3.6679,
+   "val": 4.1818,
+   "diem": 4.4388,
+   "lr": 0.0003
+  },
+  {
+   "epoch": 45,
+   "train": 3.6638,
+   "val": 4.2016,
+   "diem": 4.4706,
+   "lr": 0.0003
+  },
+  {
+   "epoch": 46,
+   "train": 3.6579,
+   "val": 4.2204,
+   "diem": 4.5017,
+   "lr": 0.0003
+  },
+  {
+   "epoch": 47,
+   "train": 3.6555,
+   "val": 4.1866,
+   "diem": 4.4521,
+   "lr": 0.0003
+  },
+  {
+   "epoch": 48,
+   "train": 3.6415,
+   "val": 4.2198,
+   "diem": 4.5089,
+   "lr": 0.0003
+  },
+  {
+   "epoch": 49,
+   "train": 3.6885,
+   "val": 4.1755,
+   "diem": 4.4191,
+   "lr": 0.0003
+  },
+  {
+   "epoch": 50,
+   "train": 3.6458,
+   "val": 4.2195,
+   "diem": 4.5064,
+   "lr": 0.0003
+  },
+  {
+   "epoch": 51,
+   "train": 3.621,
+   "val": 4.2559,
+   "diem": 4.5734,
+   "lr": 0.0001
+  },
+  {
+   "epoch": 52,
+   "train": 3.6266,
+   "val": 4.2357,
+   "diem": 4.5402,
+   "lr": 0.0001
+  },
+  {
+   "epoch": 53,
+   "train": 3.6282,
+   "val": 4.1952,
+   "diem": 4.4786,
+   "lr": 0.0001
+  },
+  {
+   "epoch": 54,
+   "train": 3.6266,
+   "val": 4.197,
+   "diem": 4.4822,
+   "lr": 0.0001
+  },
+  {
+   "epoch": 55,
+   "train": 3.6122,
+   "val": 4.2215,
+   "diem": 4.5262,
+   "lr": 0.0001
+  },
+  {
+   "epoch": 56,
+   "train": 3.6055,
+   "val": 4.2486,
+   "diem": 4.5702,
+   "lr": 0.0001
+  },
+  {
+   "epoch": 57,
+   "train": 3.6071,
+   "val": 4.2328,
+   "diem": 4.5456,
+   "lr": 0.0001
+  },
+  {
+   "epoch": 58,
+   "train": 3.6104,
+   "val": 4.2561,
+   "diem": 4.579,
+   "lr": 0.0001
+  },
+  {
+   "epoch": 59,
+   "train": 3.601,
+   "val": 4.2246,
+   "diem": 4.5363,
+   "lr": 0.0001
+  },
+  {
+   "epoch": 60,
+   "train": 3.6017,
+   "val": 4.2468,
+   "diem": 4.5694,
+   "lr": 0.0001
+  },
+  {
+   "epoch": 61,
+   "train": 3.597,
+   "val": 4.2366,
+   "diem": 4.5564,
+   "lr": 0.0001
+  }
+ ],
+ "learning_data": [
+  {
+   "so_bn": 159,
+   "train_mean": 4.5197,
+   "train_std": 0.2645,
+   "val_mean": 4.7563,
+   "val_std": 0.0044
+  },
+  {
+   "so_bn": 318,
+   "train_mean": 4.3336,
+   "train_std": 0.3621,
+   "val_mean": 4.7105,
+   "val_std": 0.0258
+  },
+  {
+   "so_bn": 478,
+   "train_mean": 3.6823,
+   "train_std": 0.1438,
+   "val_mean": 4.3361,
+   "val_std": 0.1118
+  },
+  {
+   "so_bn": 637,
+   "train_mean": 3.7618,
+   "train_std": 0.1456,
+   "val_mean": 4.2576,
+   "val_std": 0.0609
+  },
+  {
+   "so_bn": 796,
+   "train_mean": 3.7206,
+   "train_std": 0.0294,
+   "val_mean": 4.184,
+   "val_std": 0.0481
+  }
+ ],
+ "learning_note": "Huấn luyện lại chỉ để vẽ đường cong (seed 0 theo epoch; 3 seed theo lượng dữ liệu). Không dùng làm mô hình triển khai.",
+ "robustness": {
+  "Validation": [
+   {
+    "kich_ban": "Dữ liệu gốc",
+    "giu_nhom": 1.0,
+    "auc": 0.651,
+    "mae": 4.179
+   },
+   {
+    "kich_ban": "Bỏ khám 6M",
+    "giu_nhom": 0.968,
+    "auc": 0.651,
+    "mae": 4.4202
+   },
+   {
+    "kich_ban": "Bỏ khám 12M",
+    "giu_nhom": 0.928,
+    "auc": 0.6453,
+    "mae": 4.3241
+   },
+   {
+    "kich_ban": "Chỉ khám 0M",
+    "giu_nhom": 0.896,
+    "auc": 0.6595,
+    "mae": 5.9631
+   }
+  ],
+  "Test": [
+   {
+    "kich_ban": "Dữ liệu gốc",
+    "giu_nhom": 1.0,
+    "auc": 0.6618,
+    "mae": 3.5084
+   },
+   {
+    "kich_ban": "Bỏ khám 6M",
+    "giu_nhom": 0.9739,
+    "auc": 0.6774,
+    "mae": 3.5581
+   },
+   {
+    "kich_ban": "Bỏ khám 12M",
+    "giu_nhom": 0.913,
+    "auc": 0.7004,
+    "mae": 4.5444
+   },
+   {
+    "kich_ban": "Chỉ khám 0M",
+    "giu_nhom": 0.8957,
+    "auc": 0.7013,
+    "mae": 5.9185
+   }
+  ]
+ },
+ "final_summary": {
+  "GRU – MAE": {
+   "Train": "3.693",
+   "Validation": "4.179",
+   "Test": "3.508"
+  },
+  "GRU – RMSE": {
+   "Train": "5.141",
+   "Validation": "6.410",
+   "Test": "4.999"
+  },
+  "GRU – R²": {
+   "Train": "0.922",
+   "Validation": "0.866",
+   "Test": "0.917"
+  },
+  "GRU – dự đoán lệch ≤ 5": {
+   "Train": "74.1%",
+   "Validation": "70.7%",
+   "Test": "78.5%"
+  },
+  "GRU – dự đoán lệch ≤ 10": {
+   "Train": "94.0%",
+   "Validation": "92.3%",
+   "Test": "93.9%"
+  },
+  "GRU – đúng xu hướng": {
+   "Train": "73.9%",
+   "Validation": "70.5%",
+   "Test": "78.0%"
+  },
+  "KMeans – η²": {
+   "Train": "0.267",
+   "Validation": "0.200",
+   "Test": "0.227"
+  },
+  "KMeans – thứ tự nhóm": {
+   "Train": "Đúng",
+   "Validation": "Đúng",
+   "Test": "Đúng"
+  },
+  "KMeans – AUC suy giảm nhanh": {
+   "Train": "0.725",
+   "Validation": "0.651",
+   "Test": "0.662"
+  },
+  "KMeans – Accuracy": {
+   "Train": "81.0%",
+   "Validation": "76.8%",
+   "Test": "72.0%"
+  },
+  "KMeans – Độ nhạy": {
+   "Train": "55.5%",
+   "Validation": "44.0%",
+   "Test": "50.0%"
+  },
+  "KMeans – Độ đặc hiệu": {
+   "Train": "89.5%",
+   "Validation": "86.2%",
+   "Test": "82.4%"
+  },
+  "Hệ thống – đúng giai đoạn 36M": {
+   "Train": "76.0%",
+   "Validation": "69.9%",
+   "Test": "71.9%"
+  },
+  "Hệ thống – lệch ≤ 1 giai đoạn": {
+   "Train": "99.7%",
+   "Validation": "97.6%",
+   "Test": "100.0%"
+  }
+ },
+ "accuracy_train_val": {
+  "GRU – dự đoán lệch ≤ 5": {
+   "Train": "74.1%",
+   "Validation": "70.7%"
+  },
+  "GRU – dự đoán lệch ≤ 10": {
+   "Train": "94.0%",
+   "Validation": "92.3%"
+  },
+  "GRU – độ chính xác theo % (100% − MAPE)": {
+   "Train": "84.8%",
+   "Validation": "84.6%"
+  },
+  "GRU – đúng xu hướng (giảm / không giảm)": {
+   "Train": "73.9%",
+   "Validation": "70.5%"
+  },
+  "KMeans – Accuracy": {
+   "Train": "81.0%",
+   "Validation": "76.8%"
+  },
+  "KMeans – Độ nhạy": {
+   "Train": "55.5%",
+   "Validation": "44.0%"
+  },
+  "KMeans – Độ đặc hiệu": {
+   "Train": "89.5%",
+   "Validation": "86.2%"
+  },
+  "Hệ thống – đúng giai đoạn CKD 36M": {
+   "Train": "76.0%",
+   "Validation": "69.9%"
+  },
+  "Hệ thống – lệch ≤ 1 giai đoạn": {
+   "Train": "99.7%",
+   "Validation": "97.6%"
+  }
+ },
+ "sample_counts": [
+  {
+   "name": "Phân nhóm, Silhouette, Davies–Bouldin, giai đoạn CKD, phân tích A",
+   "Train": "796",
+   "Validation": "171"
+  },
+  {
+   "name": "Tốc độ eGFR thật, η² (BN có eGFR thật sau 12 tháng)",
+   "Train": "510",
+   "Validation": "112"
+  },
+  {
+   "name": "Ngưỡng \"suy giảm nhanh\" (25% thấp nhất)",
+   "Train": "510",
+   "Validation": "—"
+  },
+  {
+   "name": "AUC phát hiện suy giảm nhanh (25 BN suy giảm nhanh)",
+   "Train": "—",
+   "Validation": "112"
+  },
+  {
+   "name": "Độ ổn định ARI (lấy mẫu lại Train, đánh giá trên Validation)",
+   "Train": "20 lần × 796",
+   "Validation": "171"
+  },
+  {
+   "name": "Phân tích B: độ bền khi khám thiếu (BN khám đủ 3 lần)",
+   "Train": "—",
+   "Validation": "125"
+  },
+  {
+   "name": "Phân tích B: AUC khi khám thiếu (BN khám đủ 3 lần + có eGFR thật)",
+   "Train": "—",
+   "Validation": "112"
+  }
+ ],
+ "cluster_experiments": [
+  {
+   "mo_hinh": "GMM",
+   "ten": "GMM (tối ưu 48 thiết lập)",
+   "auc": 0.646,
+   "eta2": 0.134,
+   "ari": 0.644,
+   "silhouette": 0.107,
+   "davies_bouldin": 2.49
+  },
+  {
+   "mo_hinh": "KMeans",
+   "ten": "K-Means (ĐƯỢC CHỌN)",
+   "auc": 0.645,
+   "eta2": 0.194,
+   "ari": 0.855,
+   "silhouette": 0.203,
+   "davies_bouldin": 1.623
+  }
+ ]
+}
