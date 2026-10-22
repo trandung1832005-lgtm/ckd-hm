@@ -1,0 +1,93 @@
+{
+  "fit_tren": "train",
+  "dien_thieu": {
+    "hypertension": 1,
+    "prevalence of CVD": 0,
+    "diabetes": 0,
+    "use of RAASi": 1,
+    "use of CCB": 0,
+    "use of diuretics": 0,
+    "proteinuria": 1,
+    "age": 71.0,
+    "SBP": 138,
+    "BMI": 23.448031187633482,
+    "Hb": 12.0,
+    "Alb": 4.0,
+    "Cr": 1.71,
+    "UPCR": 0.7058287795992714
+  },
+  "bien_doi_log": {
+    "Cr": "log",
+    "UPCR": "log1p"
+  },
+  "zscore_lam_sang": {
+    "age": {
+      "mean": 67.77889447236181,
+      "std": 13.950247445939238
+    },
+    "SBP": {
+      "mean": 140.0891959798995,
+      "std": 22.693851332426483
+    },
+    "BMI": {
+      "mean": 23.809432380403493,
+      "std": 3.7465238703467825
+    },
+    "Hb": {
+      "mean": 11.964824120603016,
+      "std": 2.2908971809510685
+    },
+    "Alb": {
+      "mean": 3.8477763819095476,
+      "std": 0.6366250170284761
+    },
+    "Cr": {
+      "mean": 0.606527593410337,
+      "std": 0.586194114253946
+    },
+    "UPCR": {
+      "mean": 0.7548329875332924,
+      "std": 0.7311147173153436
+    }
+  },
+  "zscore_eGFR": {
+    "mean": 33.32484592307998,
+    "std": 18.339739229258125
+  },
+  "cot_dau_vao_tinh": [
+    "age_z",
+    "gender_2",
+    "hypertension",
+    "diabetes",
+    "prevalence of CVD",
+    "etiology_1",
+    "etiology_2",
+    "etiology_3",
+    "etiology_4",
+    "log1p_UPCR_z",
+    "UPCR_thieu",
+    "Alb_z",
+    "SBP_z"
+  ],
+  "cot_chuoi_GRU": [
+    "eGFR_0M_in",
+    "eGFR_6M_in",
+    "eGFR_12M_in",
+    "obs_6M",
+    "obs_12M"
+  ],
+  "cot_nhan": [
+    "y_18M",
+    "y_24M",
+    "y_30M",
+    "y_36M"
+  ],
+  "tao_lai_trong_code": {
+    "obs_0M": "luôn = 1",
+    "dt_0M": "luôn = 0",
+    "dt_6M": "0.5 * (1 - obs_6M)",
+    "dt_12M": "0 nếu obs_12M = 1; 0.5 nếu obs_12M = 0 và obs_6M = 1; 1.0 nếu cả hai = 0",
+    "mask_xM": "1 nếu y_xM không trống, 0 nếu trống",
+    "eGFR_cuoi": "eGFR_12M_in * std + mean (vì đã điền tiến)"
+  }
+}

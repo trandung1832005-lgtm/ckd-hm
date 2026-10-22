@@ -1,0 +1,23 @@
+{
+  "source": "Số liệu trong báo cáo đồ án (đã được người dùng xác nhận). Tương ứng thí nghiệm 4 'GRU + chống quá khớp' trong nhat_ky_thi_nghiem_du_doan.csv.",
+  "caveat": "Trọng số tương ứng với các số liệu này KHÔNG có trong thư mục Demo_HM: trọng số đang triển khai (gru_lstm_phat_nang.pt) tái hiện MAE 3.693/4.179/3.508 chứ không phải 3.780/4.205/3.562. Cần bổ sung trọng số của phiên bản báo cáo để hai nguồn trùng khớp.",
+  "regression": {
+    "Train": {"mae": 3.780, "rmse": 5.234, "r2": 0.919, "within5": 0.733, "within10": 0.939},
+    "Validation": {"mae": 4.205, "rmse": 6.448, "r2": 0.865, "within5": 0.704, "within10": 0.920},
+    "Test": {"mae": 3.562, "rmse": 5.040, "r2": 0.916, "within5": 0.782, "within10": 0.942}
+  },
+  "risk_detection_test": {"auc": 0.677, "accuracy": 0.730, "sensitivity": 0.531, "specificity": 0.824},
+  "cluster_comparison": {
+    "note": "Nguồn: nhat_ky_thi_nghiem_phan_cum.csv (tối ưu và so sánh trên Train/Validation).",
+    "GMM": {"auc": 0.646, "eta2": 0.134, "ari": 0.644, "silhouette": 0.107, "davies_bouldin": 2.490},
+    "KMeans": {"auc": 0.645, "eta2": 0.194, "ari": 0.855, "silhouette": 0.203, "davies_bouldin": 1.623}
+  },
+  "experiments": [
+    {"id": 1, "model": "GRU", "name": "GRU seq2seq cơ bản", "val_mae": 4.709, "train_mae": null, "params": 8513, "note": "Thử 3 mức che dữ liệu, 1 seed"},
+    {"id": 2, "model": "GRU", "name": "GRU seq2seq – 12 cấu hình × 3 seed", "val_mae": 4.716, "train_mae": null, "params": null, "note": "Tìm siêu tham số, gộp 5 seed"},
+    {"id": 3, "model": "GRU", "name": "GRU nâng cao (cửa sổ trượt + Attention)", "val_mae": 4.101, "train_mae": 3.521, "params": 60929, "note": "24 cấu hình, 2 giai đoạn, gộp 5 seed"},
+    {"id": 3, "model": "LSTM", "name": "LSTM nâng cao (cửa sổ trượt + Attention)", "val_mae": 4.145, "train_mae": 3.520, "params": 319937, "note": "Cùng quy trình với GRU"},
+    {"id": 4, "model": "GRU", "name": "GRU + chống quá khớp (được chọn trong báo cáo)", "val_mae": 4.205, "train_mae": 3.780, "params": 60929, "note": "Phạt khoảng cách Train–Val, dropout/weight decay mạnh"},
+    {"id": 4, "model": "LSTM", "name": "LSTM + chống quá khớp", "val_mae": 4.243, "train_mae": 3.752, "params": 82241, "note": "Cùng quy trình với GRU"}
+  ]
+}

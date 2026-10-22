@@ -1,0 +1,1932 @@
+{
+ "sets": {
+  "Train": {
+   "regression": {
+    "n_patients": 510,
+    "n_values": 1759,
+    "mae": 3.692988172059005,
+    "rmse": 5.140533742228825,
+    "r2": 0.9217603833199405,
+    "within5": 0.7413303013075612,
+    "within10": 0.9403069926094372,
+    "bias": -0.10551230225815177,
+    "per_month": {
+     "18": {
+      "n": 500,
+      "mae": 3.1965877976063735,
+      "rmse": 4.788930291697265
+     },
+     "24": {
+      "n": 467,
+      "mae": 3.533362540468171,
+      "rmse": 4.820752291789767
+     },
+     "30": {
+      "n": 417,
+      "mae": 4.089964297678306,
+      "rmse": 5.38084546674521
+     },
+     "36": {
+      "n": 375,
+      "mae": 4.112205006181637,
+      "rmse": 5.677622790072448
+     }
+    },
+    "mae_by_stage": {
+     "G1": {
+      "n": 11,
+      "mae": 14.071384416379157
+     },
+     "G2": {
+      "n": 125,
+      "mae": 5.874510739138099
+     },
+     "G3a": {
+      "n": 341,
+      "mae": 3.917116625226519
+     },
+     "G3b": {
+      "n": 428,
+      "mae": 3.629617492726106
+     },
+     "G4": {
+      "n": 542,
+      "mae": 3.2377183822388695
+     },
+     "G5": {
+      "n": 312,
+      "mae": 3.0859317449258774
+     }
+    },
+    "stage36": {
+     "n": 375,
+     "exact": 0.76,
+     "within1": 0.9973333333333333
+    }
+   },
+   "cluster": {
+    "counts": {
+     "Chuyển biến xấu": 222,
+     "Ổn định": 225,
+     "Cải thiện": 349
+    },
+    "n_eval": 510,
+    "n_fast": 128,
+    "mean_true_slope": {
+     "Chuyển biến xấu": -5.471916926152448,
+     "Ổn định": -1.4894226469381417,
+     "Cải thiện": -0.3714724726611804
+    },
+    "eta2": 0.26739262669015307,
+    "kruskal_p": 1.3411425821202131e-30,
+    "order_ok": true,
+    "auc": 0.7249877290575917,
+    "auc_distance": 0.7520656086387434,
+    "accuracy": 0.8098039215686275,
+    "sensitivity": 0.5546875,
+    "specificity": 0.8952879581151832,
+    "confusion": {
+     "tn": 342,
+     "fp": 40,
+     "fn": 57,
+     "tp": 71
+    }
+   }
+  },
+  "Validation": {
+   "regression": {
+    "n_patients": 112,
+    "n_values": 389,
+    "mae": 4.178978964371184,
+    "rmse": 6.41026504519871,
+    "r2": 0.8662248361027185,
+    "within5": 0.7069408740359897,
+    "within10": 0.922879177377892,
+    "bias": 0.35758014565328344,
+    "per_month": {
+     "18": {
+      "n": 112,
+      "mae": 3.826725457654208,
+      "rmse": 6.033373803479573
+     },
+     "24": {
+      "n": 102,
+      "mae": 3.584190664214434,
+      "rmse": 5.3772685407165
+     },
+     "30": {
+      "n": 92,
+      "mae": 4.532705535977935,
+      "rmse": 6.886598771424802
+     },
+     "36": {
+      "n": 83,
+      "mae": 4.993171190641889,
+      "rmse": 7.440656396086943
+     }
+    },
+    "mae_by_stage": {
+     "G1": {
+      "n": 1,
+      "mae": 2.3879902014652856
+     },
+     "G2": {
+      "n": 33,
+      "mae": 6.273154723310124
+     },
+     "G3a": {
+      "n": 83,
+      "mae": 3.846643227724875
+     },
+     "G3b": {
+      "n": 124,
+      "mae": 3.9122287689524264
+     },
+     "G4": {
+      "n": 106,
+      "mae": 4.175101281231082
+     },
+     "G5": {
+      "n": 42,
+      "mae": 4.030291190665021
+     }
+    },
+    "stage36": {
+     "n": 83,
+     "exact": 0.6987951807228916,
+     "within1": 0.9759036144578314
+    }
+   },
+   "cluster": {
+    "counts": {
+     "Chuyển biến xấu": 54,
+     "Ổn định": 45,
+     "Cải thiện": 72
+    },
+    "n_eval": 112,
+    "n_fast": 25,
+    "mean_true_slope": {
+     "Chuyển biến xấu": -4.884455103213991,
+     "Ổn định": -0.5686563916682581,
+     "Cải thiện": 0.09372065118297242
+    },
+    "eta2": 0.19958264098850936,
+    "kruskal_p": 6.946629820765331e-06,
+    "order_ok": true,
+    "auc": 0.6510344827586206,
+    "auc_distance": 0.6947126436781609,
+    "accuracy": 0.7678571428571429,
+    "sensitivity": 0.44,
+    "specificity": 0.8620689655172413,
+    "confusion": {
+     "tn": 75,
+     "fp": 12,
+     "fn": 14,
+     "tp": 11
+    }
+   }
+  },
+  "Test": {
+   "regression": {
+    "n_patients": 100,
+    "n_values": 330,
+    "mae": 3.5083802810891154,
+    "rmse": 4.999159488551797,
+    "r2": 0.9171617144520838,
+    "within5": 0.7848484848484848,
+    "within10": 0.9393939393939394,
+    "bias": -0.8607862230699596,
+    "per_month": {
+     "18": {
+      "n": 100,
+      "mae": 3.4025473712107743,
+      "rmse": 5.226816727027074
+     },
+     "24": {
+      "n": 89,
+      "mae": 2.9417165487462995,
+      "rmse": 3.9852816135103617
+     },
+     "30": {
+      "n": 77,
+      "mae": 3.4048381498675755,
+      "rmse": 4.7961297612015095
+     },
+     "36": {
+      "n": 64,
+      "mae": 4.586335082189165,
+      "rmse": 6.03441325563512
+     }
+    },
+    "mae_by_stage": {
+     "G2": {
+      "n": 18,
+      "mae": 5.511965622326773
+     },
+     "G3a": {
+      "n": 54,
+      "mae": 4.2655710332328285
+     },
+     "G3b": {
+      "n": 83,
+      "mae": 3.3539880425775235
+     },
+     "G4": {
+      "n": 91,
+      "mae": 3.215310926745027
+     },
+     "G5": {
+      "n": 84,
+      "mae": 3.0623211178002547
+     }
+    },
+    "stage36": {
+     "n": 64,
+     "exact": 0.71875,
+     "within1": 1.0
+    }
+   },
+   "cluster": {
+    "counts": {
+     "Chuyển biến xấu": 60,
+     "Ổn định": 36,
+     "Cải thiện": 75
+    },
+    "n_eval": 100,
+    "n_fast": 32,
+    "mean_true_slope": {
+     "Chuyển biến xấu": -5.090579765872383,
+     "Ổn định": -2.4153509166417297,
+     "Cải thiện": -0.7839495579278444
+    },
+    "eta2": 0.22711043412033521,
+    "kruskal_p": 6.053608273641421e-06,
+    "order_ok": true,
+    "auc": 0.6617647058823529,
+    "auc_distance": 0.7683823529411765,
+    "accuracy": 0.72,
+    "sensitivity": 0.5,
+    "specificity": 0.8235294117647058,
+    "confusion": {
+     "tn": 56,
+     "fp": 12,
+     "fn": 16,
+     "tp": 16
+    }
+   }
+  }
+ },
+ "scatter_test": [
+  {
+   "month": 18,
+   "actual": 34.27,
+   "predicted": 44.72
+  },
+  {
+   "month": 18,
+   "actual": 46.91,
+   "predicted": 54.61
+  },
+  {
+   "month": 18,
+   "actual": 60.44,
+   "predicted": 62.0
+  },
+  {
+   "month": 18,
+   "actual": 33.05,
+   "predicted": 32.6
+  },
+  {
+   "month": 18,
+   "actual": 50.49,
+   "predicted": 51.05
+  },
+  {
+   "month": 18,
+   "actual": 14.64,
+   "predicted": 14.43
+  },
+  {
+   "month": 18,
+   "actual": 51.32,
+   "predicted": 46.92
+  },
+  {
+   "month": 18,
+   "actual": 22.29,
+   "predicted": 22.59
+  },
+  {
+   "month": 18,
+   "actual": 15.78,
+   "predicted": 16.66
+  },
+  {
+   "month": 18,
+   "actual": 28.28,
+   "predicted": 26.48
+  },
+  {
+   "month": 18,
+   "actual": 50.43,
+   "predicted": 45.75
+  },
+  {
+   "month": 18,
+   "actual": 22.54,
+   "predicted": 16.88
+  },
+  {
+   "month": 18,
+   "actual": 49.64,
+   "predicted": 50.47
+  },
+  {
+   "month": 18,
+   "actual": 36.96,
+   "predicted": 37.6
+  },
+  {
+   "month": 18,
+   "actual": 20.45,
+   "predicted": 27.0
+  },
+  {
+   "month": 18,
+   "actual": 42.62,
+   "predicted": 46.64
+  },
+  {
+   "month": 18,
+   "actual": 47.95,
+   "predicted": 45.29
+  },
+  {
+   "month": 18,
+   "actual": 58.25,
+   "predicted": 62.02
+  },
+  {
+   "month": 18,
+   "actual": 46.43,
+   "predicted": 50.66
+  },
+  {
+   "month": 18,
+   "actual": 8.85,
+   "predicted": 11.2
+  },
+  {
+   "month": 18,
+   "actual": 12.48,
+   "predicted": 18.17
+  },
+  {
+   "month": 18,
+   "actual": 31.59,
+   "predicted": 28.64
+  },
+  {
+   "month": 18,
+   "actual": 29.61,
+   "predicted": 36.75
+  },
+  {
+   "month": 18,
+   "actual": 30.99,
+   "predicted": 29.29
+  },
+  {
+   "month": 18,
+   "actual": 27.52,
+   "predicted": 30.91
+  },
+  {
+   "month": 18,
+   "actual": 59.31,
+   "predicted": 53.09
+  },
+  {
+   "month": 18,
+   "actual": 13.75,
+   "predicted": 12.74
+  },
+  {
+   "month": 18,
+   "actual": 47.97,
+   "predicted": 75.65
+  },
+  {
+   "month": 18,
+   "actual": 13.31,
+   "predicted": 17.87
+  },
+  {
+   "month": 18,
+   "actual": 38.78,
+   "predicted": 44.39
+  },
+  {
+   "month": 18,
+   "actual": 34.62,
+   "predicted": 36.58
+  },
+  {
+   "month": 18,
+   "actual": 9.59,
+   "predicted": 9.01
+  },
+  {
+   "month": 18,
+   "actual": 7.95,
+   "predicted": 14.08
+  },
+  {
+   "month": 18,
+   "actual": 9.75,
+   "predicted": 11.1
+  },
+  {
+   "month": 18,
+   "actual": 81.33,
+   "predicted": 75.35
+  },
+  {
+   "month": 18,
+   "actual": 39.36,
+   "predicted": 40.48
+  },
+  {
+   "month": 18,
+   "actual": 46.95,
+   "predicted": 60.08
+  },
+  {
+   "month": 18,
+   "actual": 26.3,
+   "predicted": 25.26
+  },
+  {
+   "month": 18,
+   "actual": 43.15,
+   "predicted": 44.14
+  },
+  {
+   "month": 18,
+   "actual": 8.86,
+   "predicted": 9.94
+  },
+  {
+   "month": 18,
+   "actual": 12.86,
+   "predicted": 17.18
+  },
+  {
+   "month": 18,
+   "actual": 5.31,
+   "predicted": 7.13
+  },
+  {
+   "month": 18,
+   "actual": 21.13,
+   "predicted": 22.23
+  },
+  {
+   "month": 18,
+   "actual": 53.76,
+   "predicted": 45.22
+  },
+  {
+   "month": 18,
+   "actual": 12.81,
+   "predicted": 14.21
+  },
+  {
+   "month": 18,
+   "actual": 19.8,
+   "predicted": 25.02
+  },
+  {
+   "month": 18,
+   "actual": 33.77,
+   "predicted": 31.78
+  },
+  {
+   "month": 18,
+   "actual": 22.77,
+   "predicted": 29.51
+  },
+  {
+   "month": 18,
+   "actual": 22.42,
+   "predicted": 19.57
+  },
+  {
+   "month": 18,
+   "actual": 22.17,
+   "predicted": 23.08
+  },
+  {
+   "month": 18,
+   "actual": 11.36,
+   "predicted": 13.42
+  },
+  {
+   "month": 18,
+   "actual": 8.76,
+   "predicted": 8.93
+  },
+  {
+   "month": 18,
+   "actual": 62.08,
+   "predicted": 59.22
+  },
+  {
+   "month": 18,
+   "actual": 25.38,
+   "predicted": 22.93
+  },
+  {
+   "month": 18,
+   "actual": 29.47,
+   "predicted": 30.5
+  },
+  {
+   "month": 18,
+   "actual": 19.43,
+   "predicted": 19.54
+  },
+  {
+   "month": 18,
+   "actual": 55.8,
+   "predicted": 53.82
+  },
+  {
+   "month": 18,
+   "actual": 30.37,
+   "predicted": 29.43
+  },
+  {
+   "month": 18,
+   "actual": 60.59,
+   "predicted": 64.03
+  },
+  {
+   "month": 18,
+   "actual": 28.11,
+   "predicted": 28.44
+  },
+  {
+   "month": 18,
+   "actual": 7.97,
+   "predicted": 9.88
+  },
+  {
+   "month": 18,
+   "actual": 60.1,
+   "predicted": 76.47
+  },
+  {
+   "month": 18,
+   "actual": 61.22,
+   "predicted": 71.5
+  },
+  {
+   "month": 18,
+   "actual": 14.43,
+   "predicted": 12.29
+  },
+  {
+   "month": 18,
+   "actual": 16.27,
+   "predicted": 16.61
+  },
+  {
+   "month": 18,
+   "actual": 49.53,
+   "predicted": 45.29
+  },
+  {
+   "month": 18,
+   "actual": 35.78,
+   "predicted": 37.49
+  },
+  {
+   "month": 18,
+   "actual": 4.73,
+   "predicted": 6.67
+  },
+  {
+   "month": 18,
+   "actual": 5.6,
+   "predicted": 5.1
+  },
+  {
+   "month": 18,
+   "actual": 19.49,
+   "predicted": 20.23
+  },
+  {
+   "month": 18,
+   "actual": 31.61,
+   "predicted": 28.88
+  },
+  {
+   "month": 18,
+   "actual": 43.63,
+   "predicted": 43.92
+  },
+  {
+   "month": 18,
+   "actual": 10.93,
+   "predicted": 14.0
+  },
+  {
+   "month": 18,
+   "actual": 44.75,
+   "predicted": 46.51
+  },
+  {
+   "month": 18,
+   "actual": 13.69,
+   "predicted": 13.62
+  },
+  {
+   "month": 18,
+   "actual": 18.42,
+   "predicted": 18.84
+  },
+  {
+   "month": 18,
+   "actual": 38.74,
+   "predicted": 35.66
+  },
+  {
+   "month": 18,
+   "actual": 9.34,
+   "predicted": 11.81
+  },
+  {
+   "month": 18,
+   "actual": 11.22,
+   "predicted": 12.21
+  },
+  {
+   "month": 18,
+   "actual": 36.19,
+   "predicted": 47.63
+  },
+  {
+   "month": 18,
+   "actual": 47.1,
+   "predicted": 51.61
+  },
+  {
+   "month": 18,
+   "actual": 11.38,
+   "predicted": 12.87
+  },
+  {
+   "month": 18,
+   "actual": 15.45,
+   "predicted": 14.23
+  },
+  {
+   "month": 18,
+   "actual": 35.85,
+   "predicted": 33.55
+  },
+  {
+   "month": 18,
+   "actual": 23.54,
+   "predicted": 21.24
+  },
+  {
+   "month": 18,
+   "actual": 37.57,
+   "predicted": 41.51
+  },
+  {
+   "month": 18,
+   "actual": 7.25,
+   "predicted": 9.98
+  },
+  {
+   "month": 18,
+   "actual": 7.79,
+   "predicted": 6.02
+  },
+  {
+   "month": 18,
+   "actual": 33.73,
+   "predicted": 30.89
+  },
+  {
+   "month": 18,
+   "actual": 19.76,
+   "predicted": 18.64
+  },
+  {
+   "month": 18,
+   "actual": 9.1,
+   "predicted": 9.17
+  },
+  {
+   "month": 18,
+   "actual": 20.45,
+   "predicted": 19.3
+  },
+  {
+   "month": 18,
+   "actual": 15.09,
+   "predicted": 17.54
+  },
+  {
+   "month": 18,
+   "actual": 45.35,
+   "predicted": 43.62
+  },
+  {
+   "month": 18,
+   "actual": 19.18,
+   "predicted": 25.78
+  },
+  {
+   "month": 18,
+   "actual": 38.74,
+   "predicted": 40.14
+  },
+  {
+   "month": 18,
+   "actual": 44.33,
+   "predicted": 47.87
+  },
+  {
+   "month": 18,
+   "actual": 14.6,
+   "predicted": 12.48
+  },
+  {
+   "month": 18,
+   "actual": 39.33,
+   "predicted": 36.66
+  },
+  {
+   "month": 18,
+   "actual": 62.28,
+   "predicted": 47.72
+  },
+  {
+   "month": 24,
+   "actual": 40.38,
+   "predicted": 43.03
+  },
+  {
+   "month": 24,
+   "actual": 52.07,
+   "predicted": 52.69
+  },
+  {
+   "month": 24,
+   "actual": 55.89,
+   "predicted": 59.15
+  },
+  {
+   "month": 24,
+   "actual": 29.71,
+   "predicted": 31.05
+  },
+  {
+   "month": 24,
+   "actual": 16.08,
+   "predicted": 13.36
+  },
+  {
+   "month": 24,
+   "actual": 22.29,
+   "predicted": 20.53
+  },
+  {
+   "month": 24,
+   "actual": 15.7,
+   "predicted": 15.44
+  },
+  {
+   "month": 24,
+   "actual": 24.54,
+   "predicted": 25.1
+  },
+  {
+   "month": 24,
+   "actual": 46.34,
+   "predicted": 43.44
+  },
+  {
+   "month": 24,
+   "actual": 19.99,
+   "predicted": 16.1
+  },
+  {
+   "month": 24,
+   "actual": 48.97,
+   "predicted": 49.65
+  },
+  {
+   "month": 24,
+   "actual": 42.36,
+   "predicted": 36.85
+  },
+  {
+   "month": 24,
+   "actual": 22.25,
+   "predicted": 25.68
+  },
+  {
+   "month": 24,
+   "actual": 45.25,
+   "predicted": 44.97
+  },
+  {
+   "month": 24,
+   "actual": 47.52,
+   "predicted": 43.44
+  },
+  {
+   "month": 24,
+   "actual": 51.9,
+   "predicted": 58.66
+  },
+  {
+   "month": 24,
+   "actual": 41.67,
+   "predicted": 47.94
+  },
+  {
+   "month": 24,
+   "actual": 10.21,
+   "predicted": 9.86
+  },
+  {
+   "month": 24,
+   "actual": 5.72,
+   "predicted": 16.65
+  },
+  {
+   "month": 24,
+   "actual": 26.72,
+   "predicted": 26.93
+  },
+  {
+   "month": 24,
+   "actual": 33.59,
+   "predicted": 35.03
+  },
+  {
+   "month": 24,
+   "actual": 26.97,
+   "predicted": 24.56
+  },
+  {
+   "month": 24,
+   "actual": 29.36,
+   "predicted": 28.87
+  },
+  {
+   "month": 24,
+   "actual": 53.57,
+   "predicted": 50.48
+  },
+  {
+   "month": 24,
+   "actual": 14.29,
+   "predicted": 11.92
+  },
+  {
+   "month": 24,
+   "actual": 69.71,
+   "predicted": 70.58
+  },
+  {
+   "month": 24,
+   "actual": 11.75,
+   "predicted": 17.15
+  },
+  {
+   "month": 24,
+   "actual": 38.64,
+   "predicted": 42.35
+  },
+  {
+   "month": 24,
+   "actual": 34.95,
+   "predicted": 35.75
+  },
+  {
+   "month": 24,
+   "actual": 9.51,
+   "predicted": 7.86
+  },
+  {
+   "month": 24,
+   "actual": 6.28,
+   "predicted": 13.02
+  },
+  {
+   "month": 24,
+   "actual": 73.53,
+   "predicted": 73.86
+  },
+  {
+   "month": 24,
+   "actual": 38.42,
+   "predicted": 38.94
+  },
+  {
+   "month": 24,
+   "actual": 44.23,
+   "predicted": 57.22
+  },
+  {
+   "month": 24,
+   "actual": 19.91,
+   "predicted": 24.41
+  },
+  {
+   "month": 24,
+   "actual": 42.78,
+   "predicted": 41.82
+  },
+  {
+   "month": 24,
+   "actual": 8.22,
+   "predicted": 9.62
+  },
+  {
+   "month": 24,
+   "actual": 11.53,
+   "predicted": 15.38
+  },
+  {
+   "month": 24,
+   "actual": 18.75,
+   "predicted": 21.26
+  },
+  {
+   "month": 24,
+   "actual": 47.1,
+   "predicted": 44.08
+  },
+  {
+   "month": 24,
+   "actual": 8.83,
+   "predicted": 13.75
+  },
+  {
+   "month": 24,
+   "actual": 19.94,
+   "predicted": 24.88
+  },
+  {
+   "month": 24,
+   "actual": 30.7,
+   "predicted": 29.61
+  },
+  {
+   "month": 24,
+   "actual": 20.59,
+   "predicted": 27.72
+  },
+  {
+   "month": 24,
+   "actual": 21.29,
+   "predicted": 18.26
+  },
+  {
+   "month": 24,
+   "actual": 25.49,
+   "predicted": 22.68
+  },
+  {
+   "month": 24,
+   "actual": 6.07,
+   "predicted": 12.87
+  },
+  {
+   "month": 24,
+   "actual": 6.96,
+   "predicted": 8.09
+  },
+  {
+   "month": 24,
+   "actual": 56.02,
+   "predicted": 57.48
+  },
+  {
+   "month": 24,
+   "actual": 24.53,
+   "predicted": 21.78
+  },
+  {
+   "month": 24,
+   "actual": 30.58,
+   "predicted": 29.43
+  },
+  {
+   "month": 24,
+   "actual": 16.89,
+   "predicted": 18.23
+  },
+  {
+   "month": 24,
+   "actual": 52.11,
+   "predicted": 50.72
+  },
+  {
+   "month": 24,
+   "actual": 37.5,
+   "predicted": 27.74
+  },
+  {
+   "month": 24,
+   "actual": 62.95,
+   "predicted": 60.26
+  },
+  {
+   "month": 24,
+   "actual": 27.63,
+   "predicted": 27.39
+  },
+  {
+   "month": 24,
+   "actual": 6.26,
+   "predicted": 8.79
+  },
+  {
+   "month": 24,
+   "actual": 69.94,
+   "predicted": 67.95
+  },
+  {
+   "month": 24,
+   "actual": 9.8,
+   "predicted": 11.17
+  },
+  {
+   "month": 24,
+   "actual": 12.77,
+   "predicted": 14.84
+  },
+  {
+   "month": 24,
+   "actual": 45.67,
+   "predicted": 44.11
+  },
+  {
+   "month": 24,
+   "actual": 39.21,
+   "predicted": 36.16
+  },
+  {
+   "month": 24,
+   "actual": 16.67,
+   "predicted": 18.51
+  },
+  {
+   "month": 24,
+   "actual": 32.24,
+   "predicted": 26.62
+  },
+  {
+   "month": 24,
+   "actual": 41.09,
+   "predicted": 41.14
+  },
+  {
+   "month": 24,
+   "actual": 12.27,
+   "predicted": 12.35
+  },
+  {
+   "month": 24,
+   "actual": 46.21,
+   "predicted": 44.72
+  },
+  {
+   "month": 24,
+   "actual": 12.72,
+   "predicted": 12.63
+  },
+  {
+   "month": 24,
+   "actual": 18.49,
+   "predicted": 16.99
+  },
+  {
+   "month": 24,
+   "actual": 34.66,
+   "predicted": 34.08
+  },
+  {
+   "month": 24,
+   "actual": 7.32,
+   "predicted": 11.44
+  },
+  {
+   "month": 24,
+   "actual": 11.43,
+   "predicted": 11.76
+  },
+  {
+   "month": 24,
+   "actual": 59.34,
+   "predicted": 47.07
+  },
+  {
+   "month": 24,
+   "actual": 17.76,
+   "predicted": 11.54
+  },
+  {
+   "month": 24,
+   "actual": 7.51,
+   "predicted": 11.99
+  },
+  {
+   "month": 24,
+   "actual": 28.29,
+   "predicted": 32.3
+  },
+  {
+   "month": 24,
+   "actual": 20.49,
+   "predicted": 19.79
+  },
+  {
+   "month": 24,
+   "actual": 40.34,
+   "predicted": 39.09
+  },
+  {
+   "month": 24,
+   "actual": 4.48,
+   "predicted": 8.68
+  },
+  {
+   "month": 24,
+   "actual": 36.2,
+   "predicted": 28.6
+  },
+  {
+   "month": 24,
+   "actual": 21.11,
+   "predicted": 16.75
+  },
+  {
+   "month": 24,
+   "actual": 8.45,
+   "predicted": 14.47
+  },
+  {
+   "month": 24,
+   "actual": 41.55,
+   "predicted": 41.79
+  },
+  {
+   "month": 24,
+   "actual": 21.73,
+   "predicted": 24.84
+  },
+  {
+   "month": 24,
+   "actual": 42.01,
+   "predicted": 39.01
+  },
+  {
+   "month": 24,
+   "actual": 46.28,
+   "predicted": 46.36
+  },
+  {
+   "month": 24,
+   "actual": 13.36,
+   "predicted": 11.29
+  },
+  {
+   "month": 24,
+   "actual": 34.05,
+   "predicted": 35.13
+  },
+  {
+   "month": 24,
+   "actual": 48.6,
+   "predicted": 45.87
+  },
+  {
+   "month": 30,
+   "actual": 37.3,
+   "predicted": 42.98
+  },
+  {
+   "month": 30,
+   "actual": 52.37,
+   "predicted": 52.94
+  },
+  {
+   "month": 30,
+   "actual": 62.15,
+   "predicted": 58.64
+  },
+  {
+   "month": 30,
+   "actual": 30.18,
+   "predicted": 30.75
+  },
+  {
+   "month": 30,
+   "actual": 13.97,
+   "predicted": 12.66
+  },
+  {
+   "month": 30,
+   "actual": 18.01,
+   "predicted": 19.01
+  },
+  {
+   "month": 30,
+   "actual": 14.84,
+   "predicted": 14.82
+  },
+  {
+   "month": 30,
+   "actual": 39.34,
+   "predicted": 43.14
+  },
+  {
+   "month": 30,
+   "actual": 22.34,
+   "predicted": 15.38
+  },
+  {
+   "month": 30,
+   "actual": 50.94,
+   "predicted": 50.1
+  },
+  {
+   "month": 30,
+   "actual": 40.51,
+   "predicted": 37.31
+  },
+  {
+   "month": 30,
+   "actual": 19.34,
+   "predicted": 25.36
+  },
+  {
+   "month": 30,
+   "actual": 43.08,
+   "predicted": 45.02
+  },
+  {
+   "month": 30,
+   "actual": 45.67,
+   "predicted": 43.52
+  },
+  {
+   "month": 30,
+   "actual": 54.85,
+   "predicted": 58.6
+  },
+  {
+   "month": 30,
+   "actual": 40.32,
+   "predicted": 47.34
+  },
+  {
+   "month": 30,
+   "actual": 7.93,
+   "predicted": 8.73
+  },
+  {
+   "month": 30,
+   "actual": 22.39,
+   "predicted": 26.41
+  },
+  {
+   "month": 30,
+   "actual": 34.29,
+   "predicted": 34.57
+  },
+  {
+   "month": 30,
+   "actual": 23.25,
+   "predicted": 21.81
+  },
+  {
+   "month": 30,
+   "actual": 27.41,
+   "predicted": 27.54
+  },
+  {
+   "month": 30,
+   "actual": 51.56,
+   "predicted": 50.46
+  },
+  {
+   "month": 30,
+   "actual": 12.34,
+   "predicted": 10.94
+  },
+  {
+   "month": 30,
+   "actual": 60.43,
+   "predicted": 69.57
+  },
+  {
+   "month": 30,
+   "actual": 38.25,
+   "predicted": 42.42
+  },
+  {
+   "month": 30,
+   "actual": 33.56,
+   "predicted": 36.53
+  },
+  {
+   "month": 30,
+   "actual": 4.91,
+   "predicted": 7.66
+  },
+  {
+   "month": 30,
+   "actual": 69.77,
+   "predicted": 74.78
+  },
+  {
+   "month": 30,
+   "actual": 35.17,
+   "predicted": 38.95
+  },
+  {
+   "month": 30,
+   "actual": 35.78,
+   "predicted": 56.74
+  },
+  {
+   "month": 30,
+   "actual": 20.23,
+   "predicted": 23.6
+  },
+  {
+   "month": 30,
+   "actual": 49.39,
+   "predicted": 41.59
+  },
+  {
+   "month": 30,
+   "actual": 8.22,
+   "predicted": 9.1
+  },
+  {
+   "month": 30,
+   "actual": 7.35,
+   "predicted": 13.48
+  },
+  {
+   "month": 30,
+   "actual": 19.52,
+   "predicted": 20.98
+  },
+  {
+   "month": 30,
+   "actual": 5.56,
+   "predicted": 13.23
+  },
+  {
+   "month": 30,
+   "actual": 16.2,
+   "predicted": 25.14
+  },
+  {
+   "month": 30,
+   "actual": 26.38,
+   "predicted": 28.73
+  },
+  {
+   "month": 30,
+   "actual": 19.83,
+   "predicted": 26.77
+  },
+  {
+   "month": 30,
+   "actual": 20.92,
+   "predicted": 17.43
+  },
+  {
+   "month": 30,
+   "actual": 23.56,
+   "predicted": 22.15
+  },
+  {
+   "month": 30,
+   "actual": 6.9,
+   "predicted": 11.8
+  },
+  {
+   "month": 30,
+   "actual": 5.81,
+   "predicted": 7.26
+  },
+  {
+   "month": 30,
+   "actual": 56.02,
+   "predicted": 57.87
+  },
+  {
+   "month": 30,
+   "actual": 22.74,
+   "predicted": 20.62
+  },
+  {
+   "month": 30,
+   "actual": 29.72,
+   "predicted": 29.17
+  },
+  {
+   "month": 30,
+   "actual": 13.78,
+   "predicted": 16.95
+  },
+  {
+   "month": 30,
+   "actual": 48.36,
+   "predicted": 50.24
+  },
+  {
+   "month": 30,
+   "actual": 28.42,
+   "predicted": 27.3
+  },
+  {
+   "month": 30,
+   "actual": 58.18,
+   "predicted": 59.81
+  },
+  {
+   "month": 30,
+   "actual": 25.72,
+   "predicted": 27.24
+  },
+  {
+   "month": 30,
+   "actual": 73.4,
+   "predicted": 67.54
+  },
+  {
+   "month": 30,
+   "actual": 9.56,
+   "predicted": 10.24
+  },
+  {
+   "month": 30,
+   "actual": 14.39,
+   "predicted": 13.71
+  },
+  {
+   "month": 30,
+   "actual": 42.86,
+   "predicted": 44.25
+  },
+  {
+   "month": 30,
+   "actual": 40.46,
+   "predicted": 36.43
+  },
+  {
+   "month": 30,
+   "actual": 15.5,
+   "predicted": 17.66
+  },
+  {
+   "month": 30,
+   "actual": 27.85,
+   "predicted": 25.42
+  },
+  {
+   "month": 30,
+   "actual": 42.71,
+   "predicted": 40.99
+  },
+  {
+   "month": 30,
+   "actual": 9.53,
+   "predicted": 11.47
+  },
+  {
+   "month": 30,
+   "actual": 43.81,
+   "predicted": 44.38
+  },
+  {
+   "month": 30,
+   "actual": 10.97,
+   "predicted": 11.89
+  },
+  {
+   "month": 30,
+   "actual": 15.96,
+   "predicted": 15.46
+  },
+  {
+   "month": 30,
+   "actual": 36.32,
+   "predicted": 33.73
+  },
+  {
+   "month": 30,
+   "actual": 6.41,
+   "predicted": 10.2
+  },
+  {
+   "month": 30,
+   "actual": 8.75,
+   "predicted": 11.32
+  },
+  {
+   "month": 30,
+   "actual": 32.41,
+   "predicted": 32.41
+  },
+  {
+   "month": 30,
+   "actual": 22.37,
+   "predicted": 18.9
+  },
+  {
+   "month": 30,
+   "actual": 35.54,
+   "predicted": 27.14
+  },
+  {
+   "month": 30,
+   "actual": 18.66,
+   "predicted": 14.94
+  },
+  {
+   "month": 30,
+   "actual": 55.36,
+   "predicted": 41.95
+  },
+  {
+   "month": 30,
+   "actual": 15.86,
+   "predicted": 24.61
+  },
+  {
+   "month": 30,
+   "actual": 38.59,
+   "predicted": 39.08
+  },
+  {
+   "month": 30,
+   "actual": 44.51,
+   "predicted": 46.17
+  },
+  {
+   "month": 30,
+   "actual": 11.81,
+   "predicted": 10.17
+  },
+  {
+   "month": 30,
+   "actual": 37.57,
+   "predicted": 34.86
+  },
+  {
+   "month": 30,
+   "actual": 54.83,
+   "predicted": 45.64
+  },
+  {
+   "month": 36,
+   "actual": 24.16,
+   "predicted": 43.23
+  },
+  {
+   "month": 36,
+   "actual": 54.0,
+   "predicted": 52.32
+  },
+  {
+   "month": 36,
+   "actual": 56.18,
+   "predicted": 57.92
+  },
+  {
+   "month": 36,
+   "actual": 31.27,
+   "predicted": 30.01
+  },
+  {
+   "month": 36,
+   "actual": 14.64,
+   "predicted": 11.7
+  },
+  {
+   "month": 36,
+   "actual": 20.04,
+   "predicted": 18.37
+  },
+  {
+   "month": 36,
+   "actual": 15.1,
+   "predicted": 14.51
+  },
+  {
+   "month": 36,
+   "actual": 43.77,
+   "predicted": 42.94
+  },
+  {
+   "month": 36,
+   "actual": 19.26,
+   "predicted": 15.1
+  },
+  {
+   "month": 36,
+   "actual": 41.8,
+   "predicted": 37.01
+  },
+  {
+   "month": 36,
+   "actual": 16.8,
+   "predicted": 25.29
+  },
+  {
+   "month": 36,
+   "actual": 48.67,
+   "predicted": 45.02
+  },
+  {
+   "month": 36,
+   "actual": 44.89,
+   "predicted": 43.25
+  },
+  {
+   "month": 36,
+   "actual": 42.96,
+   "predicted": 46.86
+  },
+  {
+   "month": 36,
+   "actual": 12.04,
+   "predicted": 19.87
+  },
+  {
+   "month": 36,
+   "actual": 25.59,
+   "predicted": 26.8
+  },
+  {
+   "month": 36,
+   "actual": 51.97,
+   "predicted": 49.52
+  },
+  {
+   "month": 36,
+   "actual": 13.68,
+   "predicted": 11.03
+  },
+  {
+   "month": 36,
+   "actual": 52.84,
+   "predicted": 68.27
+  },
+  {
+   "month": 36,
+   "actual": 40.18,
+   "predicted": 41.98
+  },
+  {
+   "month": 36,
+   "actual": 38.2,
+   "predicted": 36.95
+  },
+  {
+   "month": 36,
+   "actual": 71.84,
+   "predicted": 73.82
+  },
+  {
+   "month": 36,
+   "actual": 35.37,
+   "predicted": 38.31
+  },
+  {
+   "month": 36,
+   "actual": 51.63,
+   "predicted": 56.87
+  },
+  {
+   "month": 36,
+   "actual": 18.89,
+   "predicted": 23.36
+  },
+  {
+   "month": 36,
+   "actual": 44.54,
+   "predicted": 41.9
+  },
+  {
+   "month": 36,
+   "actual": 5.71,
+   "predicted": 8.74
+  },
+  {
+   "month": 36,
+   "actual": 16.4,
+   "predicted": 20.49
+  },
+  {
+   "month": 36,
+   "actual": 12.77,
+   "predicted": 25.16
+  },
+  {
+   "month": 36,
+   "actual": 25.72,
+   "predicted": 28.4
+  },
+  {
+   "month": 36,
+   "actual": 13.83,
+   "predicted": 26.37
+  },
+  {
+   "month": 36,
+   "actual": 5.81,
+   "predicted": 17.05
+  },
+  {
+   "month": 36,
+   "actual": 5.13,
+   "predicted": 11.59
+  },
+  {
+   "month": 36,
+   "actual": 3.97,
+   "predicted": 7.79
+  },
+  {
+   "month": 36,
+   "actual": 58.92,
+   "predicted": 57.34
+  },
+  {
+   "month": 36,
+   "actual": 13.64,
+   "predicted": 16.36
+  },
+  {
+   "month": 36,
+   "actual": 54.81,
+   "predicted": 50.31
+  },
+  {
+   "month": 36,
+   "actual": 70.78,
+   "predicted": 58.87
+  },
+  {
+   "month": 36,
+   "actual": 27.32,
+   "predicted": 26.67
+  },
+  {
+   "month": 36,
+   "actual": 65.41,
+   "predicted": 66.28
+  },
+  {
+   "month": 36,
+   "actual": 8.2,
+   "predicted": 10.62
+  },
+  {
+   "month": 36,
+   "actual": 11.5,
+   "predicted": 13.16
+  },
+  {
+   "month": 36,
+   "actual": 44.69,
+   "predicted": 43.96
+  },
+  {
+   "month": 36,
+   "actual": 30.88,
+   "predicted": 37.28
+  },
+  {
+   "month": 36,
+   "actual": 10.86,
+   "predicted": 17.58
+  },
+  {
+   "month": 36,
+   "actual": 27.22,
+   "predicted": 24.48
+  },
+  {
+   "month": 36,
+   "actual": 43.66,
+   "predicted": 41.36
+  },
+  {
+   "month": 36,
+   "actual": 46.45,
+   "predicted": 44.27
+  },
+  {
+   "month": 36,
+   "actual": 10.26,
+   "predicted": 11.68
+  },
+  {
+   "month": 36,
+   "actual": 19.91,
+   "predicted": 14.54
+  },
+  {
+   "month": 36,
+   "actual": 44.3,
+   "predicted": 33.55
+  },
+  {
+   "month": 36,
+   "actual": 4.73,
+   "predicted": 9.68
+  },
+  {
+   "month": 36,
+   "actual": 6.5,
+   "predicted": 10.87
+  },
+  {
+   "month": 36,
+   "actual": 23.45,
+   "predicted": 32.04
+  },
+  {
+   "month": 36,
+   "actual": 23.33,
+   "predicted": 18.34
+  },
+  {
+   "month": 36,
+   "actual": 36.06,
+   "predicted": 26.54
+  },
+  {
+   "month": 36,
+   "actual": 24.8,
+   "predicted": 14.54
+  },
+  {
+   "month": 36,
+   "actual": 45.18,
+   "predicted": 42.28
+  },
+  {
+   "month": 36,
+   "actual": 16.36,
+   "predicted": 24.19
+  },
+  {
+   "month": 36,
+   "actual": 41.85,
+   "predicted": 39.52
+  },
+  {
+   "month": 36,
+   "actual": 44.51,
+   "predicted": 45.84
+  },
+  {
+   "month": 36,
+   "actual": 10.39,
+   "predicted": 9.91
+  },
+  {
+   "month": 36,
+   "actual": 40.74,
+   "predicted": 34.56
+  },
+  {
+   "month": 36,
+   "actual": 47.95,
+   "predicted": 45.63
+  }
+ ],
+ "fast_decline_threshold": -3.4617339464285712
+}

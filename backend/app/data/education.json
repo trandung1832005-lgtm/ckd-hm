@@ -1,0 +1,78 @@
+{
+  "updated_on": "2026-10-23",
+  "review_status": "Nội dung giáo dục sức khoẻ tổng quát, biên soạn dựa trên các nguồn tham khảo bên dưới. Cần được bác sĩ chuyên khoa thận rà soát trước khi dùng cho bệnh nhân thật.",
+  "disclaimer": "Thông tin chỉ mang tính tham khảo, không thay thế tư vấn, chẩn đoán hay điều trị của nhân viên y tế. Hệ thống không kê đơn, không đề xuất liều thuốc và không tự quyết định phác đồ.",
+  "sources": [
+    {"id": "kdigo2024", "title": "KDIGO 2024 Clinical Practice Guideline for the Evaluation and Management of Chronic Kidney Disease", "url": "https://kdigo.org/guidelines/ckd-evaluation-and-management/", "accessed": "2026-10-23"},
+    {"id": "nkf", "title": "National Kidney Foundation – About Chronic Kidney Disease", "url": "https://www.kidney.org/atoz/content/about-chronic-kidney-disease", "accessed": "2026-10-23"}
+  ],
+  "egfr_guide": {
+    "title": "Theo dõi eGFR và các xét nghiệm liên quan",
+    "points": [
+      "eGFR (mL/phút/1,73m²) ước tính khả năng lọc của thận từ creatinine/cystatin C, tuổi và giới. Một giá trị đơn lẻ ít có ý nghĩa bằng xu hướng qua nhiều lần đo.",
+      "Chẩn đoán và phân giai đoạn CKD cần kết hợp eGFR với albumin niệu (ví dụ UPCR/ACR) và thời gian tồn tại (thường ≥ 3 tháng). Chỉ dựa vào eGFR là chưa đủ, đặc biệt ở G1 và G2.",
+      "Hãy trao đổi với bác sĩ về lịch xét nghiệm eGFR, albumin/đạm niệu, huyết áp, đường huyết và các thuốc đang dùng.",
+      "Dự đoán của hệ thống là ước lượng thống kê từ dữ liệu nghiên cứu; sai số thực tế còn tuỳ từng người."
+    ]
+  },
+  "warning_signs": {
+    "title": "Dấu hiệu cần được nhân viên y tế đánh giá sớm",
+    "points": [
+      "Phù mới xuất hiện hoặc tăng nhanh (mắt cá chân, mặt), tăng cân nhanh.",
+      "Lượng nước tiểu giảm rõ, nước tiểu có máu hoặc nhiều bọt kéo dài.",
+      "Mệt mỏi nhiều, buồn nôn/nôn kéo dài, chán ăn, ngứa dai dẳng.",
+      "Khó thở, đau ngực, huyết áp tăng cao kéo dài hoặc không kiểm soát được.",
+      "eGFR giảm nhanh giữa hai lần xét nghiệm gần nhau."
+    ],
+    "note": "Nếu có triệu chứng nặng hoặc đột ngột, hãy liên hệ cơ sở y tế ngay thay vì chờ đến lịch tái khám."
+  },
+  "stages": {
+    "G1": {"range": "eGFR ≥ 90", "label": "Chức năng thận bình thường/cao",
+      "description": "Có thể có tổn thương thận (ví dụ đạm niệu) dù eGFR còn bình thường. Chỉ eGFR ≥ 90 không đủ kết luận CKD.",
+      "goals": ["Xác định và kiểm soát nguyên nhân (tăng huyết áp, đái tháo đường...)", "Giảm nguy cơ tim mạch"],
+      "diet": ["Chế độ ăn cân đối, tốt cho tim mạch", "Hạn chế thực phẩm chế biến sẵn nhiều muối", "Uống đủ nước theo hướng dẫn của bác sĩ"],
+      "lifestyle": ["Vận động đều đặn theo khả năng", "Bỏ thuốc lá", "Không tự ý dùng thuốc giảm đau nhóm NSAID; hỏi bác sĩ trước khi dùng"],
+      "monitoring": ["Khám định kỳ theo lịch bác sĩ đề ra", "Theo dõi huyết áp, eGFR và đạm niệu"],
+      "complications": ["Thường chưa có triệu chứng; cần quản lý bệnh nền"]},
+    "G2": {"range": "eGFR 60–89", "label": "Giảm nhẹ",
+      "description": "Giảm nhẹ chức năng lọc. Ý nghĩa lâm sàng phụ thuộc vào việc có dấu hiệu tổn thương thận khác hay không.",
+      "goals": ["Làm chậm tiến triển", "Kiểm soát chặt huyết áp và đường huyết theo mục tiêu của bác sĩ"],
+      "diet": ["Giảm muối theo hướng dẫn", "Duy trì chế độ ăn tốt cho tim mạch"],
+      "lifestyle": ["Áp dụng các khuyến nghị của G1"],
+      "monitoring": ["Tái khám theo lịch của bác sĩ", "Theo dõi huyết áp, eGFR, albumin niệu"],
+      "complications": ["Nguy cơ tăng huyết áp; có thể bắt đầu thay đổi chuyển hoá xương – khoáng ở giai đoạn muộn hơn"]},
+    "G3a": {"range": "eGFR 45–59", "label": "Giảm nhẹ đến trung bình",
+      "description": "Giảm chức năng thận mức nhẹ đến trung bình.",
+      "goals": ["Phòng ngừa và phát hiện sớm biến chứng", "Chuẩn bị theo dõi chuyên khoa"],
+      "diet": ["Trao đổi với bác sĩ/chuyên gia dinh dưỡng về muối, đạm, kali, phospho theo kết quả xét nghiệm"],
+      "lifestyle": ["Vận động vừa sức đều đặn", "Tự theo dõi huyết áp (và đường huyết nếu có đái tháo đường)"],
+      "monitoring": ["Thường được khuyến nghị khám chuyên khoa thận", "Xét nghiệm canxi, phospho, PTH, huyết sắc tố theo chỉ định"],
+      "complications": ["Thiếu máu", "Rối loạn chuyển hoá xương – khoáng", "Tăng huyết áp khó kiểm soát hơn"]},
+    "G3b": {"range": "eGFR 30–44", "label": "Giảm trung bình đến nặng",
+      "description": "Giảm chức năng thận mức trung bình đến nặng.",
+      "goals": ["Kiểm soát biến chứng chặt chẽ hơn", "Tìm hiểu các lựa chọn điều trị thay thế thận khi cần"],
+      "diet": ["Chế độ ăn thận theo hướng dẫn cá nhân hoá của chuyên gia dinh dưỡng"],
+      "lifestyle": ["Cân bằng vận động và nghỉ ngơi", "Tuân thủ thuốc và lịch hẹn"],
+      "monitoring": ["Theo dõi chuyên khoa thận với tần suất do bác sĩ quyết định", "Xét nghiệm thường xuyên hơn"],
+      "complications": ["Thiếu máu và rối loạn xương – khoáng rõ hơn", "Nguy cơ toan chuyển hoá"]},
+    "G4": {"range": "eGFR 15–29", "label": "Giảm nặng",
+      "description": "Giảm chức năng thận nặng.",
+      "goals": ["Chuẩn bị cho các lựa chọn điều trị thay thế thận (lọc máu hoặc ghép thận) cùng bác sĩ"],
+      "diet": ["Chế độ ăn nghiêm ngặt hơn, làm việc sát với chuyên gia dinh dưỡng thận"],
+      "lifestyle": ["Có thể cần hạn chế dịch theo chỉ định", "Tuân thủ điều trị để bảo tồn chức năng thận còn lại"],
+      "monitoring": ["Khám chuyên khoa thận thường xuyên", "Đánh giá chuẩn bị đường vào lọc máu/ghép thận khi bác sĩ chỉ định"],
+      "complications": ["Nguy cơ cao các biến chứng CKD", "Mệt mỏi, phù, buồn nôn có thể xuất hiện"]},
+    "G5": {"range": "eGFR < 15", "label": "Suy thận",
+      "description": "Suy thận; thường cần điều trị thay thế thận do bác sĩ chỉ định.",
+      "goals": ["Điều trị thay thế thận hoặc chăm sóc nâng đỡ theo quyết định của bác sĩ và người bệnh"],
+      "diet": ["Chế độ ăn và hạn chế dịch theo hướng dẫn riêng của đội ngũ điều trị"],
+      "lifestyle": ["Tuân thủ lịch điều trị", "Quản lý triệu chứng và duy trì chất lượng cuộc sống"],
+      "monitoring": ["Cần theo dõi y tế sát sao"],
+      "complications": ["Quá tải dịch, rối loạn điện giải, ứ đọng độc chất – cần được chăm sóc y tế liên tục"]}
+  },
+  "clusters": {
+    "Chuyển biến xấu": "Nhóm có xu hướng giảm eGFR nhanh hơn tương đối so với các nhóm còn lại trong dữ liệu huấn luyện.",
+    "Ổn định": "Nhóm có xu hướng thay đổi eGFR ở mức trung gian.",
+    "Cải thiện": "Nhóm có xu hướng giảm eGFR chậm hơn hoặc diễn biến thuận lợi hơn tương đối. Không có nghĩa eGFR chắc chắn tăng."
+  }
+}
