@@ -50,7 +50,8 @@ def require_roles(*roles: str) -> Callable:
 def get_patient_for(db: Session, user: User, patient_id: int, write: bool = False) -> PatientProfile:
     """Kiểm soát truy cập theo từng hồ sơ.
 
-    - clinician: chỉ hồ sơ được phân công. - patient: chỉ hồ sơ của chính mình, chỉ đọc.
+    - clinician: chỉ hồ sơ được phân công. - patient: chỉ hồ sơ của chính mình (đọc và nhập dữ liệu/dự đoán;
+      ghi chú chuyên môn vẫn chỉ dành cho nhân viên y tế qua dependency riêng).
     - admin: KHÔNG truy cập dữ liệu lâm sàng (nguyên tắc tối thiểu hoá dữ liệu).
     Trả 404 (không phải 403) khi không có quyền để không lộ sự tồn tại của hồ sơ.
     """
@@ -62,7 +63,7 @@ def get_patient_for(db: Session, user: User, patient_id: int, write: bool = Fals
                                                           PatientAssignment.clinician_id == user.id))
         if ok:
             return p
-    elif user.role == "patient" and not write and p.user_id == user.id:
+    elif user.role == "patient" and p.user_id == user.id:
         return p
     raise err(404, "Không tìm thấy hồ sơ bệnh nhân", "not_found")
 

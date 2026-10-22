@@ -21,8 +21,8 @@ export default function Patients() {
   return (
     <>
       <PageTitle title={isDoc ? 'Bệnh nhân' : 'Hồ sơ của tôi'}
-        subtitle={isDoc ? 'Chỉ hiển thị các hồ sơ bạn được phân công hoặc cấp quyền.' : undefined}
-        actions={isDoc && <Link to="/app/patients/new"><Button><Plus className="h-4 w-4" aria-hidden /> Tạo hồ sơ</Button></Link>} />
+        subtitle={isDoc ? 'Chỉ hiển thị các hồ sơ bạn được phân công hoặc cấp quyền.' : 'Hồ sơ riêng của bạn: nhập dữ liệu xét nghiệm và xem dự đoán eGFR.'}
+        actions={(isDoc || (data && data.total === 0)) && <Link to="/app/patients/new"><Button><Plus className="h-4 w-4" aria-hidden /> {isDoc ? 'Tạo hồ sơ' : 'Tạo hồ sơ của tôi'}</Button></Link>} />
       {isDoc && (
         <form className="mb-4 flex flex-wrap gap-2" role="search" onSubmit={(e) => { e.preventDefault(); setPage(1); setApplied(q) }}>
           <div className="relative min-w-52 flex-1"><Search className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-slate-400" aria-hidden />
@@ -33,7 +33,7 @@ export default function Patients() {
         </form>)}
       <div className="rounded-xl border border-slate-200 bg-white p-2 sm:p-4">
         {loading ? <Spinner /> : error ? <Alert kind="error">{error}</Alert> : !data || data.items.length === 0 ? (
-          <Empty title="Không có hồ sơ" hint={isDoc ? 'Tạo hồ sơ mới hoặc thay đổi bộ lọc.' : 'Nhân viên y tế cần tạo hồ sơ và liên kết với email của bạn.'} />
+          <Empty title="Không có hồ sơ" hint={isDoc ? 'Tạo hồ sơ mới hoặc thay đổi bộ lọc.' : 'Bạn chưa có hồ sơ. Hãy tạo hồ sơ của mình để tự nhập dữ liệu và xem dự đoán eGFR.'} action={!isDoc ? <Link to="/app/patients/new"><Button>Tạo hồ sơ của tôi</Button></Link> : undefined} />
         ) : (
           <>
             <Table head={['Mã', 'eGFR gần nhất', 'Nhóm xu hướng', 'Dự đoán gần nhất', 'Cập nhật']}>

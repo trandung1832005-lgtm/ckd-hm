@@ -137,6 +137,7 @@ class PredictionRun(Base):
     results: Mapped[list["PredictionResult"]] = relationship(back_populates="run", cascade="all, delete-orphan",
                                                              order_by="PredictionResult.month")
     version_obj: Mapped[ModelVersion | None] = relationship()
+    requester: Mapped["User"] = relationship(foreign_keys=[requested_by])
 
 
 class PredictionResult(Base):

@@ -33,7 +33,7 @@ export default function App() {
               <Route path="predictions/:runId" element={<PredictionResult />} />
               <Route path="education" element={<Education />} />
             </Route>
-            <Route path="/app" element={<ProtectedLayout roles={['clinician']} />}>
+            <Route path="/app" element={<ProtectedLayout roles={['clinician', 'patient']} />}>
               <Route path="patients/new" element={<PatientNew />} />
               <Route path="patients/:id/predict" element={<PredictNew />} />
             </Route>

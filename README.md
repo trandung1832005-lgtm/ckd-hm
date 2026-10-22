@@ -12,7 +12,7 @@ ckd-app/
 │  ├─ ml_assets/       gru_lstm_phat_nang.pt, phan_cum.joblib, tham_so_tien_xu_ly.json
 │  ├─ migrations/      Alembic (0001_initial_schema)
 │  ├─ scripts/         verify_model.py, build_evaluation.py, seed_demo.py
-│  └─ tests/           19 test (phân quyền, dự đoán, lỗi, admin)
+│  └─ tests/           20 test (phân quyền, dự đoán, lỗi, admin)
 ├─ frontend/           React + TypeScript + Vite + Tailwind + Recharts
 ├─ render.yaml         Blueprint Render (API Docker + PostgreSQL)
 └─ screenshots/        ảnh chụp các trang chính
@@ -56,12 +56,12 @@ PostgreSQL local: đặt `DATABASE_URL=postgresql://user:pass@localhost:5432/ckd
 |---|---|---|
 | POST `/auth/register` | công khai | role `patient` hoặc `clinician` (chờ Admin duyệt). Không thể đăng ký admin |
 | POST `/auth/login` · GET `/auth/me` · POST `/auth/logout` · POST `/auth/change-password` | | JWT 60 phút; giới hạn 5 lần sai/15 phút |
-| GET `/patients?q=&cluster=&page=` · POST `/patients` · GET/PATCH `/patients/{id}` | clinician (được phân công) / patient (chỉ đọc hồ sơ mình) | |
-| POST `/patients/{id}/assignments` | clinician | cấp quyền cho bác sĩ khác |
-| POST/GET `/patients/{id}/measurements` | clinician ghi; patient đọc | |
-| POST `/patients/{id}/predict` `{measurement_id}` | clinician | lưu `prediction_runs` + `prediction_results`, không ghi đè lần cũ |
+| GET `/patients?q=&cluster=&page=` · POST `/patients` · GET/PATCH `/patients/{id}` | clinician (hồ sơ được phân công) / patient (chỉ hồ sơ của chính mình) | bệnh nhân tự tạo hồ sơ (mỗi tài khoản 1 hồ sơ, 409 nếu đã có) |
+| POST `/patients/{id}/assignments` | clinician / chủ hồ sơ (patient) | cấp quyền xem hồ sơ cho bác sĩ (email) |
+| POST/GET `/patients/{id}/measurements` | clinician và patient (hồ sơ của mình) | |
+| POST `/patients/{id}/predict` `{measurement_id}` | clinician và patient (hồ sơ của mình) | lưu `prediction_runs` + `prediction_results`, không ghi đè lần cũ |
 | GET `/patients/{id}/predictions` · GET `/predictions/{id}` | clinician/patient (hồ sơ của mình) | |
-| GET/POST `/patients/{id}/notes` | clinician ghi; patient chỉ thấy ghi chú `visible_to_patient` | |
+| GET/POST `/patients/{id}/notes` | chỉ clinician ghi; patient chỉ đọc ghi chú `visible_to_patient` | ghi chú/kế hoạch là phần chuyên môn của nhân viên y tế |
 | GET `/dashboard` · GET `/education` · GET `/health` | đăng nhập / công khai | |
 | GET `/admin/users` · PATCH `/admin/users/{id}` | admin | duyệt/khoá/đổi vai trò |
 | GET `/admin/model-evaluation` (+`/export` CSV) · `/admin/model-versions` · `/admin/prediction-logs` · `/admin/audit-logs` | admin | |
@@ -89,8 +89,8 @@ Quyền kiểm tra ở backend cho từng endpoint; vai trò/trạng thái đọ
 ## 6. Kiểm thử từng vai trò (thủ công, sau seed demo)
 - **Admin**: vào `/app/admin/users`, duyệt tài khoản bác sĩ `pending`; mở `/app/admin/model`; thử vào `/app/patients/1` → 404 (không có quyền dữ liệu lâm sàng).
 - **Bác sĩ**: tạo hồ sơ → *Nhập dữ liệu & dự đoán* (5 bước, hoặc CSV mẫu) → trang kết quả; thêm ghi chú/lịch tái khám; chia sẻ hồ sơ cho bác sĩ khác. Bác sĩ thứ hai chưa được cấp quyền không thấy hồ sơ.
-- **Bệnh nhân**: đăng ký bằng email đã được bác sĩ liên kết → xem dashboard, biểu đồ, lịch sử, ghi chú được chia sẻ; không thấy hồ sơ người khác; `/app/admin/*` tự chuyển về `/app`.
-Tự động: `pytest -q` (19 test).
+- **Bệnh nhân**: đăng ký → *Tạo hồ sơ của tôi* → nhập dữ liệu (5 bước) → xem kết quả dự đoán; có thể *Chia sẻ với bác sĩ* bằng email. Hoặc đăng ký bằng email đã được bác sĩ liên kết sẵn hồ sơ. Không thấy hồ sơ người khác; không ghi được ghi chú chuyên môn; `/app/admin/*` tự chuyển về `/app`. Lịch sử dự đoán ghi rõ ai nhập (bệnh nhân hay nhân viên y tế).
+Tự động: `pytest -q` (20 test).
 
 ## 7. Trạng thái chức năng
 **Đã hoàn thành**: đăng ký/đăng nhập/phân quyền 3 vai trò, duyệt bác sĩ, hồ sơ & phân công, nhập liệu nhiều bước + CSV 1 dòng, dự đoán GRU+K-Means lưu lịch sử, trang kết quả (biểu đồ G1–G5, diễn giải, cảnh báo độ tin cậy), so sánh các lần dự đoán, ghi chú/kế hoạch/lịch tái khám do bác sĩ nhập, trang giáo dục có nguồn, dashboard theo vai trò, trang Admin đánh giá mô hình (5 nhóm), phiên bản mô hình, nhật ký API & thao tác, xuất CSV đánh giá, migration, Dockerfile, hướng dẫn deploy.

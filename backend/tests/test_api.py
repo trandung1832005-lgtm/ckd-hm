@@ -67,7 +67,7 @@ def test_clinician_isolation_and_sharing(client, tokens):
     assert client.get(f"/api/patients/{p['id']}", headers=tokens["doc2"]).status_code == 200
 
 
-def test_patient_sees_only_own_and_read_only(client, tokens):
+def test_patient_sees_only_own_and_cannot_touch_others(client, tokens):
     mine = _patient(client, tokens, linked_email="pat1@t.io")
     other = _patient(client, tokens, linked_email="pat2@t.io")
     h = tokens["pat1"]
@@ -75,11 +75,38 @@ def test_patient_sees_only_own_and_read_only(client, tokens):
     assert client.get(f"/api/patients/{other['id']}", headers=h).status_code == 404
     assert client.get(f"/api/patients/{other['id']}/predictions", headers=h).status_code == 404
     assert [x["id"] for x in client.get("/api/patients", headers=h).json()["items"]] == [mine["id"]]
-    # chỉ đọc
-    assert client.post("/api/patients", json=PATIENT, headers=h).status_code == 403
-    assert client.post(f"/api/patients/{mine['id']}/measurements", json=MEAS, headers=h).status_code == 403
-    assert client.patch(f"/api/patients/{mine['id']}", json={"diabetes": True}, headers=h).status_code == 403
-    assert client.post(f"/api/patients/{mine['id']}/predict", json={"measurement_id": 1}, headers=h).status_code == 403
+    # không ghi được vào hồ sơ người khác
+    assert client.post(f"/api/patients/{other['id']}/measurements", json=MEAS, headers=h).status_code == 404
+    assert client.patch(f"/api/patients/{other['id']}", json={"diabetes": True}, headers=h).status_code == 404
+    assert client.post(f"/api/patients/{other['id']}/predict", json={"measurement_id": 1}, headers=h).status_code == 404
+    assert client.post(f"/api/patients/{other['id']}/assignments", json={"clinician_email": "doc2@t.io"},
+                       headers=h).status_code == 404
+    # mỗi tài khoản chỉ một hồ sơ; ghi chú chuyên môn chỉ dành cho nhân viên y tế
+    assert client.post("/api/patients", json=PATIENT, headers=h).status_code == 409
+    assert client.post(f"/api/patients/{mine['id']}/notes", json={"body": "x"}, headers=h).status_code == 403
+
+
+def test_patient_self_service_prediction_and_sharing(client, tokens):
+    h = tokens["pat5"]
+    r = client.post("/api/patients", json=PATIENT, headers=h)       # tự tạo hồ sơ
+    assert r.status_code == 201, r.text
+    pid = r.json()["id"]
+    m = client.post(f"/api/patients/{pid}/measurements", json=MEAS, headers=h)
+    assert m.status_code == 201, m.text
+    run = client.post(f"/api/patients/{pid}/predict", json={"measurement_id": m.json()["id"]}, headers=h)
+    assert run.status_code == 201, run.text
+    body = run.json()
+    assert [x["month"] for x in body["results"]] == [18, 24, 30, 36] and body["requested_by_role"] == "patient"
+    assert client.patch(f"/api/patients/{pid}", json={"diabetes": True}, headers=h).status_code == 200
+    # bác sĩ chưa được chia sẻ thì không thấy; sau khi bệnh nhân chia sẻ thì thấy
+    assert client.get(f"/api/patients/{pid}", headers=tokens["doc1"]).status_code == 404
+    assert client.post(f"/api/patients/{pid}/assignments", json={"clinician_email": "doc1@t.io"}, headers=h).status_code == 201
+    seen = client.get(f"/api/patients/{pid}/predictions", headers=tokens["doc1"])
+    assert seen.status_code == 200 and seen.json()[0]["requested_by_role"] == "patient"
+    assert client.get(f"/api/patients/{pid}", headers=tokens["doc2"]).status_code == 404
+    # bệnh nhân không đổi được email liên kết
+    client.patch(f"/api/patients/{pid}", json={"linked_email": "someone@else.io"}, headers=h)
+    assert client.get(f"/api/patients/{pid}", headers=h).json()["linked_email"] == "pat5@t.io"
 
 
 # ---- 5/6/7/9: dự đoán, lưu, truy xuất, dữ liệu sai

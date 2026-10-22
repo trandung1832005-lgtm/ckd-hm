@@ -2,7 +2,7 @@ import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxi
 import { Link } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
 import { EgfrChart } from '../components/EgfrChart'
-import { Alert, Card, ClusterBadge, Disclaimer, Empty, PageTitle, Spinner, Table, Td, useAsync } from '../components/ui'
+import { Alert, Button, Card, ClusterBadge, Disclaimer, Empty, PageTitle, Spinner, Table, Td, useAsync } from '../components/ui'
 import { api } from '../lib/api'
 import { CLUSTER_ORDER, fmtDate, fmtDateTime, num } from '../lib/labels'
 import type { Run } from '../lib/types'
@@ -71,9 +71,12 @@ function Clinician({ d }: { d: any }) {
 
 function PatientDash({ d }: { d: any }) {
   const run = useAsync(() => (d.latest_run_id ? api<Run>(`/api/predictions/${d.latest_run_id}`) : Promise.resolve(null)), [d.latest_run_id])
-  if (!d.profile) return <Alert kind="info" title="Chưa có hồ sơ liên kết">Nhân viên y tế cần tạo hồ sơ và liên kết với email đăng ký của bạn. Hãy cung cấp email này cho cơ sở khám.</Alert>
+  if (!d.profile) return (
+    <Card title="Bắt đầu theo dõi"><p className="mb-4 text-sm text-slate-600">Bạn chưa có hồ sơ. Tạo hồ sơ của mình để nhập kết quả xét nghiệm và nhận dự đoán eGFR 18–36 tháng. Nếu nhân viên y tế đã tạo hồ sơ cho bạn, họ cần liên kết với email đăng ký của bạn.</p><Link to="/app/patients/new"><Button>Tạo hồ sơ của tôi</Button></Link></Card>
+  )
   return (
     <div className="space-y-6">
+      <div><Link to={`/app/patients/${d.profile.id}/predict`}><Button>Nhập dữ liệu &amp; dự đoán mới</Button></Link></div>
       <div className="grid gap-4 sm:grid-cols-3">
         <Stat label="eGFR gần nhất" value={d.latest_egfr != null ? `${num(d.latest_egfr)}` : '—'} hint="mL/phút/1,73m²" />
         <Stat label="Nhóm xu hướng" value={<ClusterBadge cluster={d.cluster} />} />

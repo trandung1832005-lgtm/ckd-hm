@@ -177,6 +177,7 @@ class RunOut(ORM):
     warnings: list[str] | None
     created_at: datetime
     model_version: str | None = None
+    requested_by_role: str | None = None
     results: list[ResultOut] = []
     history: list[EgfrOut] = []
 

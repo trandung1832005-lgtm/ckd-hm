@@ -68,6 +68,7 @@ export interface Run {
   warnings: string[] | null
   created_at: string
   model_version: string | null
+  requested_by_role: string | null
   results: PredResult[]
   history: Egfr[]
 }

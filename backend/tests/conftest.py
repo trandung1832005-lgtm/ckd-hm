@@ -36,10 +36,10 @@ def _mk(email, role, status="active"):
 def tokens(client):
     for email, role in (("admin@t.io", "admin"), ("doc1@t.io", "clinician"), ("doc2@t.io", "clinician"),
                         ("pat1@t.io", "patient"), ("pat2@t.io", "patient"),
-                        ("pat3@t.io", "patient"), ("pat4@t.io", "patient")):
+                        ("pat3@t.io", "patient"), ("pat4@t.io", "patient"), ("pat5@t.io", "patient")):
         _mk(email, role)
     out = {}
-    for email in ("admin@t.io", "doc1@t.io", "doc2@t.io", "pat1@t.io", "pat2@t.io", "pat3@t.io", "pat4@t.io"):
+    for email in ("admin@t.io", "doc1@t.io", "doc2@t.io", "pat1@t.io", "pat2@t.io", "pat3@t.io", "pat4@t.io", "pat5@t.io"):
         r = client.post("/api/auth/login", json={"email": email, "password": PW})
         assert r.status_code == 200, r.text
         out[email.split("@")[0]] = {"Authorization": f"Bearer {r.json()['access_token']}"}

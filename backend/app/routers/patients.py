@@ -16,6 +16,7 @@ from ..schemas import (EgfrOut, MeasurementIn, MeasurementOut, NoteIn, NoteOut, 
 
 router = APIRouter(prefix="/api", tags=["patients"])
 clinician_only = require_roles("clinician")
+self_or_clinician = require_roles("clinician", "patient")
 
 
 # ------------------------------------------------------------------ helpers
@@ -28,6 +29,7 @@ def run_to_out(run: PredictionRun) -> RunOut:
                 hist.append(EgfrOut(month=m, value=snap[k]))
     out = RunOut.model_validate(run)
     out.model_version = run.version_obj.version if run.version_obj else None
+    out.requested_by_role = run.requester.role if run.requester else None
     out.results = [ResultOut.model_validate(r) for r in run.results]
     out.history = hist
     return out
@@ -76,8 +78,21 @@ def list_patients(q: str | None = None, cluster: str | None = None, page: int = 
 
 
 @router.post("/patients", response_model=PatientOut, status_code=201)
-def create_patient(body: PatientCreate, request: Request, user: User = Depends(clinician_only),
+def create_patient(body: PatientCreate, request: Request, user: User = Depends(self_or_clinician),
                    db: Session = Depends(get_db)):
+    if user.role == "patient":
+        # Bệnh nhân tự tạo hồ sơ của chính mình (mỗi tài khoản một hồ sơ); không gán bác sĩ nào cho tới khi họ chia sẻ.
+        if db.scalar(select(PatientProfile.id).where(PatientProfile.user_id == user.id)):
+            raise err(409, "Bạn đã có hồ sơ", "profile_exists")
+        p = PatientProfile(code="TMP", gender=body.gender, etiology=body.etiology, hypertension=body.hypertension,
+                           diabetes=body.diabetes, cvd=body.cvd, is_demo=False, created_by=user.id,
+                           linked_email=user.email, user_id=user.id)
+        db.add(p)
+        db.flush()
+        p.code = f"BN{p.id:06d}"
+        audit(db, user, "patient_create_self", "patient", p.id, request)
+        db.commit()
+        return patient_out(db, p)
     email = body.linked_email.lower() if body.linked_email else None
     p = PatientProfile(code="TMP", gender=body.gender, etiology=body.etiology, hypertension=body.hypertension,
                        diabetes=body.diabetes, cvd=body.cvd, is_demo=body.is_demo, created_by=user.id,
@@ -101,10 +116,12 @@ def get_patient(patient_id: int, user: User = Depends(current_user), db: Session
 
 
 @router.patch("/patients/{patient_id}", response_model=PatientOut)
-def update_patient(patient_id: int, body: PatientUpdate, request: Request, user: User = Depends(clinician_only),
+def update_patient(patient_id: int, body: PatientUpdate, request: Request, user: User = Depends(self_or_clinician),
                    db: Session = Depends(get_db)):
     p = get_patient_for(db, user, patient_id, write=True)
     data = body.model_dump(exclude_unset=True)
+    if user.role == "patient":
+        data.pop("linked_email", None)  # bệnh nhân không đổi email liên kết
     if "linked_email" in data:
         data["linked_email"] = data["linked_email"].lower() if data["linked_email"] else None
     for k, v in data.items():
@@ -119,9 +136,9 @@ class ShareIn(BaseModel):
 
 
 @router.post("/patients/{patient_id}/assignments", status_code=201)
-def share_patient(patient_id: int, body: ShareIn, request: Request, user: User = Depends(clinician_only),
+def share_patient(patient_id: int, body: ShareIn, request: Request, user: User = Depends(self_or_clinician),
                   db: Session = Depends(get_db)):
-    """Cấp quyền truy cập hồ sơ cho nhân viên y tế khác (đã được duyệt)."""
+    """Cấp quyền truy cập hồ sơ cho nhân viên y tế (đã được duyệt). Chủ hồ sơ (bệnh nhân) hoặc bác sĩ đang có quyền đều làm được."""
     p = get_patient_for(db, user, patient_id, write=True)
     other = db.scalar(select(User).where(User.email == body.clinician_email.lower(), User.role == "clinician",
                                          User.status == "active"))
@@ -137,7 +154,7 @@ def share_patient(patient_id: int, body: ShareIn, request: Request, user: User =
 
 # ------------------------------------------------------------------ đo lường
 @router.post("/patients/{patient_id}/measurements", response_model=MeasurementOut, status_code=201)
-def add_measurement(patient_id: int, body: MeasurementIn, request: Request, user: User = Depends(clinician_only),
+def add_measurement(patient_id: int, body: MeasurementIn, request: Request, user: User = Depends(self_or_clinician),
                     db: Session = Depends(get_db)):
     p = get_patient_for(db, user, patient_id, write=True)
     m = ClinicalMeasurement(patient_id=p.id, recorded_on=body.recorded_on, age_years=body.age_years, sbp=body.sbp,
@@ -166,7 +183,7 @@ def _active_version(db: Session) -> ModelVersion | None:
 
 
 @router.post("/patients/{patient_id}/predict", response_model=RunOut, status_code=201)
-def predict(patient_id: int, body: PredictIn, request: Request, user: User = Depends(clinician_only),
+def predict(patient_id: int, body: PredictIn, request: Request, user: User = Depends(self_or_clinician),
             db: Session = Depends(get_db), predictor: Predictor = Depends(get_predictor)):
     p = get_patient_for(db, user, patient_id, write=True)
     m = db.scalar(select(ClinicalMeasurement).options(selectinload(ClinicalMeasurement.egfr))
@@ -214,7 +231,7 @@ def predict(patient_id: int, body: PredictIn, request: Request, user: User = Dep
 def list_predictions(patient_id: int, user: User = Depends(current_user), db: Session = Depends(get_db)):
     p = get_patient_for(db, user, patient_id)
     runs = db.scalars(select(PredictionRun).options(selectinload(PredictionRun.results),
-                                                    selectinload(PredictionRun.version_obj))
+                                                    selectinload(PredictionRun.version_obj), selectinload(PredictionRun.requester))
                       .where(PredictionRun.patient_id == p.id, PredictionRun.status == "success")
                       .order_by(PredictionRun.created_at.desc())).all()
     return [run_to_out(r) for r in runs]

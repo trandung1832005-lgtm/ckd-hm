@@ -29,16 +29,16 @@ export default function PatientDetail() {
   return (
     <>
       <PageTitle title={`Hồ sơ ${p.code}`} subtitle={<span className="flex flex-wrap items-center gap-2">Cập nhật {fmtDateTime(p.updated_at)} {p.is_demo && <DemoBadge />}</span>}
-        actions={isDoc && <Link to={`/app/patients/${p.id}/predict`}><Button><FilePlus2 className="h-4 w-4" aria-hidden /> Nhập dữ liệu &amp; dự đoán</Button></Link>} />
+        actions={<Link to={`/app/patients/${p.id}/predict`}><Button><FilePlus2 className="h-4 w-4" aria-hidden /> Nhập dữ liệu &amp; dự đoán</Button></Link>} />
       <div className="space-y-6">
         <div className="grid gap-6 lg:grid-cols-3">
           <div className="space-y-6">
-            <ProfileCard p={p} editable={isDoc} onSaved={patient.reload} />
-            {isDoc && <ShareCard id={p.id} />}
+            <ProfileCard p={p} editable onSaved={patient.reload} showEmail={isDoc} />
+            <ShareCard id={p.id} self={!isDoc} />
           </div>
           <div className="lg:col-span-2">
             <Card title="Biểu đồ eGFR – lần dự đoán mới nhất" actions={latest && <Link className="text-sm text-brand-700 underline" to={`/app/predictions/${latest.id}`}>Xem kết quả đầy đủ</Link>}>
-              {runs.loading ? <Spinner /> : !latest ? <Empty title="Chưa có dự đoán" hint={isDoc ? 'Nhập eGFR các mốc 0/6/12 tháng và chỉ số lâm sàng để dự đoán.' : 'Chưa có lần dự đoán nào cho hồ sơ này.'} /> : (
+              {runs.loading ? <Spinner /> : !latest ? <Empty title="Chưa có dự đoán" hint="Nhập eGFR các mốc 0/6/12 tháng và chỉ số lâm sàng để dự đoán." /> : (
                 <>
                   <div className="mb-3 flex flex-wrap items-center gap-3 text-sm"><ClusterBadge cluster={latest.cluster} size="lg" /><span className="text-slate-500">{fmtDateTime(latest.created_at)}</span></div>
                   <EgfrChart history={latest.history} results={latest.results} compare={cmp ? { label: `So sánh: ${fmtDate(cmp.created_at)} (#${cmp.id})`, results: cmp.results } : null} />
@@ -53,13 +53,13 @@ export default function PatientDetail() {
 
         <Card title="Lịch sử dự đoán">
           {runs.loading ? <Spinner /> : !runs.data?.length ? <Empty title="Chưa có lần dự đoán" /> : (
-            <Table head={['#', 'Thời điểm', 'Nhóm xu hướng', 'eGFR 18→36 tháng', 'G (36 th.)', 'Độ tin cậy', 'Mô hình']}>
+            <Table head={['#', 'Thời điểm', 'Nhóm xu hướng', 'eGFR 18→36 tháng', 'G (36 th.)', 'Độ tin cậy', 'Người nhập', 'Mô hình']}>
               {runs.data.map((r) => (
                 <tr key={r.id} className="hover:bg-slate-50">
                   <Td><Link className="font-medium text-brand-700 underline" to={`/app/predictions/${r.id}`}>#{r.id}</Link></Td>
                   <Td>{fmtDateTime(r.created_at)}</Td><Td><ClusterBadge cluster={r.cluster} /></Td>
                   <Td className="whitespace-nowrap">{r.results.map((x) => num(x.egfr_pred)).join(' → ')}</Td>
-                  <Td>{r.stage_36m}</Td><Td>{r.confidence}</Td><Td className="text-xs text-slate-500">{r.model_version}</Td>
+                  <Td>{r.stage_36m}</Td><Td>{r.confidence}</Td><Td className="text-xs">{r.requested_by_role === 'patient' ? 'Bệnh nhân' : 'Nhân viên y tế'}</Td><Td className="text-xs text-slate-500">{r.model_version}</Td>
                 </tr>))}
             </Table>)}
         </Card>
@@ -82,7 +82,7 @@ export default function PatientDetail() {
   )
 }
 
-function ProfileCard({ p, editable, onSaved }: { p: Patient; editable: boolean; onSaved: () => void }) {
+function ProfileCard({ p, editable, onSaved, showEmail }: { p: Patient; editable: boolean; onSaved: () => void; showEmail: boolean }) {
   const [edit, setEdit] = useState(false)
   const [f, setF] = useState({ gender: p.gender, etiology: p.etiology, hypertension: p.hypertension, diabetes: p.diabetes, cvd: p.cvd })
   const [err, setErr] = useState<string | null>(null)
@@ -103,7 +103,7 @@ function ProfileCard({ p, editable, onSaved }: { p: Patient; editable: boolean; 
           <dt className="text-slate-500">Tăng huyết áp</dt><dd>{yes(p.hypertension)}</dd>
           <dt className="text-slate-500">Đái tháo đường</dt><dd>{yes(p.diabetes)}</dd>
           <dt className="text-slate-500">Bệnh tim mạch</dt><dd>{yes(p.cvd)}</dd>
-          {editable && (<><dt className="text-slate-500">Email liên kết</dt><dd className="break-all">{p.linked_email ?? '—'}</dd></>)}
+          {showEmail && (<><dt className="text-slate-500">Email liên kết</dt><dd className="break-all">{p.linked_email ?? '—'}</dd></>)}
         </dl>
       ) : (
         <div className="space-y-3">
@@ -119,7 +119,7 @@ function ProfileCard({ p, editable, onSaved }: { p: Patient; editable: boolean; 
   )
 }
 
-function ShareCard({ id }: { id: number }) {
+function ShareCard({ id, self }: { id: number; self: boolean }) {
   const [email, setEmail] = useState('')
   const [msg, setMsg] = useState<{ k: 'success' | 'error'; t: string } | null>(null)
   const submit = async (e: FormEvent) => {
@@ -128,10 +128,10 @@ function ShareCard({ id }: { id: number }) {
     catch (ex) { setMsg({ k: 'error', t: ex instanceof ApiError ? ex.message : 'Thất bại' }) }
   }
   return (
-    <Card title={<span className="flex items-center gap-2"><Share2 className="h-4 w-4" aria-hidden />Chia sẻ hồ sơ</span>}>
+    <Card title={<span className="flex items-center gap-2"><Share2 className="h-4 w-4" aria-hidden />{self ? 'Chia sẻ với bác sĩ' : 'Chia sẻ hồ sơ'}</span>}>
       <form onSubmit={submit} className="space-y-3">
         {msg && <Alert kind={msg.k}>{msg.t}</Alert>}
-        <Field label="Email nhân viên y tế được cấp quyền"><Input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} /></Field>
+        <Field label="Email nhân viên y tế được cấp quyền" hint={self ? 'Bác sĩ này sẽ xem được hồ sơ, dữ liệu và kết quả dự đoán của bạn, và có thể ghi chú theo dõi.' : undefined}><Input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} /></Field>
         <Button type="submit" variant="secondary">Cấp quyền</Button>
       </form>
     </Card>
